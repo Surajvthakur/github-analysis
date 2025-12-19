@@ -38,7 +38,7 @@ function RepoSkeleton() {
 export default async function UserPage({ params }: UserPageProps) {
   const { username } = await params;
 
-  const user = await getGitHubUser(params.username);
+  const user = await getGitHubUser(username);
 
   return (
     <div>
@@ -78,7 +78,7 @@ export default async function UserPage({ params }: UserPageProps) {
       </section>
       
       <Suspense fallback={<RepoSkeleton />}>
-  <RepoList username={params.username} />
+  <RepoList username={username} />
       </Suspense>
 
       
