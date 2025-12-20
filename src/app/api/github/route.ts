@@ -16,6 +16,8 @@ export async function GET(request: Request) {
 
   if (type === "repos") {
     url = `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`;
+  } else if (type === "events") {
+    url = `https://api.github.com/users/${username}/events/public?per_page=30`;
   } else {
     url = `https://api.github.com/users/${username}`;
   }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { Metadata } from "next";
 import { getGitHubUser, getGitHubRepos } from "@/lib/github";
 import RepoList from "@/app/components/RepoList";
 import { Suspense } from "react";
@@ -35,6 +36,45 @@ function RepoSkeleton() {
     </div>
   );
 }
+export async function generateMetadata(
+  { params }: { params: Promise<{ username: string }> }
+): Promise<Metadata> {
+  try {
+    const { username } = await params;
+    const user = await getGitHubUser(username);
+
+    return {
+      title: `${user.name ?? user.login} | GitHub Analytics`,
+      description: user.bio ?? `GitHub profile analytics for ${user.login}`,
+      openGraph: {
+        title: `${user.name ?? user.login} | GitHub Analytics`,
+        description:
+          user.bio ?? `GitHub profile analytics for ${user.login}`,
+        images: [
+          {
+            url: user.avatar_url,
+            width: 400,
+            height: 400,
+            alt: user.login,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${user.name ?? user.login} | GitHub Analytics`,
+        description:
+          user.bio ?? `GitHub profile analytics for ${user.login}`,
+        images: [user.avatar_url],
+      },
+    };
+  } catch {
+    return {
+      title: "GitHub User Not Found",
+    };
+  }
+}
+
+
 
 export default async function UserPage({ params }: UserPageProps) {
   const { username } = await params;
