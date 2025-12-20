@@ -1,4 +1,5 @@
 import { getGitHubEvents } from "@/lib/github";
+import ContributionStats from "@/app/components/ContributionStats";
 
 function formatEvent(type: string) {
   switch (type) {
@@ -45,6 +46,7 @@ export default async function ActivityPage({
           </div>
         ))}
       </div>
+      <ContributionStats username={username} />
     </div>
   );
 }
