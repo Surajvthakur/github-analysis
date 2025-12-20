@@ -1,13 +1,13 @@
 import Link from "next/link";
 
-export default function UserLayout({
+export default async function UserLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { username: string };
+  params: Promise <{ username: string }>;
 }) {
-  const { username } = params;
+  const { username } = await params;
 
   return (
     <div>

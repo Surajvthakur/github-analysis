@@ -17,14 +17,15 @@ function RepoSkeleton() {
   );
 }
 
-export default function ReposPage({
+export default async function ReposPage({
   params,
 }: {
-  params: { username: string };
+  params: Promise <{ username: string }>;
 }) {
+  const { username } = await params;
   return (
     <Suspense fallback={<RepoSkeleton />}>
-      <RepoList username={params.username} />
+      <RepoList username={username} />
     </Suspense>
   );
 }
