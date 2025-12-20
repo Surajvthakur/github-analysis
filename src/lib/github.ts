@@ -31,6 +31,29 @@ export async function getGitHubUser(
 
   return res.json();
 }
+interface GitHubEvent {
+  id: string;
+  type: string;
+  repo: {
+    name: string;
+  };
+  created_at: string;
+}
+
+export async function getGitHubEvents(
+  username: string
+): Promise<GitHubEvent[]> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/github?username=${username}&type=events`,
+    { cache: "no-store" }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch activity");
+  }
+
+  return res.json();
+}
 
 interface GitHubRepo {
   id: number;
