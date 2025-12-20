@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getGitHubUser, getGitHubRepos } from "@/lib/github";
 import RepoList from "@/app/components/RepoList";
 import { Suspense } from "react";
+import LanguageStats from "@/app/components/LanguageStats";
 
 interface UserPageProps {
   params: Promise<{
@@ -76,7 +77,8 @@ export default async function UserPage({ params }: UserPageProps) {
           </div>
         </div>
       </section>
-      
+      <LanguageStats username={username} />
+
       <Suspense fallback={<RepoSkeleton />}>
   <RepoList username={username} />
       </Suspense>
