@@ -70,9 +70,14 @@ export default function LanguageChart({ data }: { data: DataItem[] }) {
             isAnimationActive={true}
             animationDuration={800}
 
-            label={({ name, value }) =>
-              `${name} (${Math.round((value / total) * 100)}%)`
-            }
+            label={({ name, value }) => {
+              const percentage = (value / total) * 100;
+              // Only show labels for segments above 3% to prevent overlapping
+              if (percentage >= 3) {
+                return `${name} (${Math.round(percentage)}%)`;
+              }
+              return false; // Hide label for small segments
+            }}
           >
             {data.map((_, index) => (
               <Cell key={index} fill={COLORS[index % COLORS.length]} />
