@@ -86,3 +86,31 @@ export async function getGitHubRepos(
 
   return res.json();
 }
+
+export async function getCommitActivity(username: string) {
+  const repos = await getGitHubRepos(username);
+  const activity: Record<string, number> = {};
+
+  await Promise.all(
+    repos.slice(0, 10).map(async (repo) => {
+      const res = await fetch(
+        `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=30`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+        }
+      );
+
+      if (!res.ok) return;
+
+      const commits = await res.json();
+      commits.forEach((c: any) => {
+        const date = c.commit.author.date.slice(0, 10);
+        activity[date] = (activity[date] || 0) + 1;
+      });
+    })
+  );
+
+  return activity;
+}
