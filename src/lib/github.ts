@@ -1,4 +1,4 @@
-import { getApiUrl } from "./utils";
+// Note: Server components use relative URLs, client components use getApiUrl from utils
 
 interface GitHubUser {
   login: string;
@@ -14,7 +14,8 @@ export async function getGitHubUser(
   username: string
 ): Promise<GitHubUser> {
   try {
-    const apiUrl = getApiUrl(`/api/github?username=${username}`);
+    // Use relative URL in server components - Next.js handles this automatically
+    const apiUrl = `/api/github?username=${username}`;
     const res = await fetch(apiUrl, {
       cache: "no-store",
     });
@@ -43,7 +44,8 @@ export async function getGitHubEvents(
   username: string
 ): Promise<GitHubEvent[]> {
   try {
-    const apiUrl = getApiUrl(`/api/github?username=${username}&type=events`);
+    // Use relative URL in server components
+    const apiUrl = `/api/github?username=${username}&type=events`;
     const res = await fetch(apiUrl, { cache: "no-store" });
 
     if (!res.ok) {
@@ -73,7 +75,8 @@ export async function getGitHubRepos(
   username: string
 ): Promise<GitHubRepo[]> {
   try {
-    const apiUrl = getApiUrl(`/api/github?username=${username}&type=repos`);
+    // Use relative URL in server components
+    const apiUrl = `/api/github?username=${username}&type=repos`;
     const res = await fetch(apiUrl, { cache: "no-store" });
 
     if (!res.ok) {

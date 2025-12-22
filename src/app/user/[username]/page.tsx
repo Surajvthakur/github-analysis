@@ -80,7 +80,13 @@ export async function generateMetadata(
 export default async function UserPage({ params }: UserPageProps) {
   const { username } = await params;
 
-  const user = await getGitHubUser(username);
+  let user: GitHubUser;
+  try {
+    user = await getGitHubUser(username);
+  } catch (error) {
+    // Re-throw to let error boundary handle it
+    throw error;
+  }
 
   return (
     <div>
