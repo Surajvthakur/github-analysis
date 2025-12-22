@@ -33,11 +33,11 @@ export default async function LanguageStats({
 
   return (
     <div className="mt-14">
-      <h3 className="text-2xl font-bold mb-6">
+      <h3 className="text-2xl font-bold mb-6 text-gray-100">
         Language Usage
       </h3>
   
-      <div className="rounded-2xl backdrop-blur shadow-lg p-6 border">
+      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
         <LanguageChart data={chartData} />
       </div>
     </div>

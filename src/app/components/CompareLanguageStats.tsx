@@ -31,20 +31,20 @@ export default async function CompareLanguageStats({
 
   return (
     <div className="mt-14">
-      <h2 className="text-2xl font-bold mb-8 text-center">
+      <h2 className="text-2xl font-bold mb-8 text-center text-gray-100">
         Language Usage Comparison
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="rounded-2xl bg-black/70 backdrop-blur p-6 shadow w-[500px]">
-          <h3 className="text-lg font-semibold mb-4 text-center">
+        <div className="rounded-2xl bg-gray-800/90 backdrop-blur p-6 shadow-lg border border-gray-700 w-[500px]">
+          <h3 className="text-lg font-semibold mb-4 text-center text-gray-100">
             {user1}
           </h3>
           <LanguageChart data={data1} />
         </div>
 
-        <div className="rounded-2xl bg-black/70 backdrop-blur p-6 shadow w-[500px]">
-          <h3 className="text-lg font-semibold mb-4 text-center">
+        <div className="rounded-2xl bg-gray-800/90 backdrop-blur p-6 shadow-lg border border-gray-700 w-[500px]">
+          <h3 className="text-lg font-semibold mb-4 text-center text-gray-100">
             {user2}
           </h3>
           <LanguageChart data={data2} />

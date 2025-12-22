@@ -61,7 +61,7 @@ export default function LanguageChart({ data }: { data: DataItem[] }) {
 
           {/* 🧠 Donut Chart */}
           <Pie
-            data={data}
+            data={data as any}
             dataKey="value"
             nameKey="name"
             innerRadius={70}
@@ -69,8 +69,9 @@ export default function LanguageChart({ data }: { data: DataItem[] }) {
             paddingAngle={4}
             isAnimationActive={true}
             animationDuration={800}
-
-            label={({ name, value }) => {
+            label={(props: any) => {
+              const { name, value } = props;
+              if (!name || value === undefined) return false;
               const percentage = (value / total) * 100;
               // Only show labels for segments above 3% to prevent overlapping
               if (percentage >= 3) {

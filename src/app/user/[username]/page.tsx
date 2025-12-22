@@ -4,6 +4,7 @@ import { getGitHubUser, getGitHubRepos } from "@/lib/github";
 import RepoList from "@/app/components/RepoList";
 import { Suspense } from "react";
 import LanguageStats from "@/app/components/LanguageStats";
+import UserDashboard from "@/app/components/UserDashboard";
 
 interface UserPageProps {
   params: Promise<{
@@ -83,47 +84,66 @@ export default async function UserPage({ params }: UserPageProps) {
 
   return (
     <div>
-      <section className="flex gap-6 items-start mb-10">
+      <section className="flex gap-6 items-start mb-10 p-6 rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg border border-gray-700">
         {/* Avatar */}
-        <Image
-          src={user.avatar_url}
-          alt={user.login}
-          width={120}
-          height={120}
-          className="rounded-full"
-        />
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-50"></div>
+          <Image
+            src={user.avatar_url}
+            alt={user.login}
+            width={120}
+            height={120}
+            className="rounded-full relative z-10 border-4 border-white dark:border-gray-800 shadow-xl"
+          />
+        </div>
 
         {/* Profile Info */}
-        <div>
-          <h2 className="text-3xl font-bold">
+        <div className="flex-1">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             {user.name ?? user.login}
           </h2>
-          <p className="text-gray-500 mb-2">@{user.login}</p>
+          <p className="text-gray-400 mb-3 text-lg">@{user.login}</p>
 
           {user.bio && (
-            <p className="text-gray-700 mb-4">{user.bio}</p>
+            <p className="text-gray-300 mb-6 max-w-2xl">{user.bio}</p>
           )}
 
-          <div className="flex gap-6 text-sm">
-            <span>
-              <strong>{user.followers}</strong> followers
-            </span>
-            <span>
-              <strong>{user.following}</strong> following
-            </span>
-            <span>
-              <strong>{user.public_repos}</strong> repos
-            </span>
+          <div className="flex gap-8 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">👥</span>
+              <div>
+                <div className="font-bold text-lg text-gray-100">{user.followers.toLocaleString()}</div>
+                <div className="text-gray-400 text-xs">followers</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🔗</span>
+              <div>
+                <div className="font-bold text-lg text-gray-100">{user.following.toLocaleString()}</div>
+                <div className="text-gray-400 text-xs">following</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">📦</span>
+              <div>
+                <div className="font-bold text-lg text-gray-100">{user.public_repos.toLocaleString()}</div>
+                <div className="text-gray-400 text-xs">repositories</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Comprehensive Dashboard */}
+      <Suspense fallback={<div className="animate-pulse">Loading dashboard...</div>}>
+        <UserDashboard username={username} />
+      </Suspense>
+
       <LanguageStats username={username} />
 
       <Suspense fallback={<RepoSkeleton />}>
-  <RepoList username={username} />
+        <RepoList username={username} />
       </Suspense>
-
-      
     </div>
   );
 }

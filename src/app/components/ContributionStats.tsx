@@ -10,7 +10,7 @@ export default async function ContributionStats({
 
   return (
     <div className="mt-14">
-      <h3 className="text-2xl font-bold mb-4">
+      <h3 className="text-2xl font-bold mb-4 text-gray-100">
         Contribution Activity
       </h3>
       <ContributionHeatmap data={data} />
