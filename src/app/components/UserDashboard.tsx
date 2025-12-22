@@ -22,16 +22,23 @@ interface UserDashboardProps {
 }
 
 export default async function UserDashboard({ username }: UserDashboardProps) {
-  const [user, repos, events, commitActivity, hourlyActivity, streakData, growthData, collaborators] = await Promise.all([
-    getGitHubUser(username),
-    getGitHubRepos(username),
-    getGitHubEvents(username).catch(() => []),
-    getCommitActivity(username).catch(() => ({})),
-    getHourlyActivity(username).catch(() => ({})),
-    getStreakData(username).catch(() => ({ currentStreak: 0, longestStreak: 0, totalDays: 0 })),
-    getGrowthMetrics(username).catch(() => []),
-    getCollaborators(username).catch(() => []),
-  ]);
+  try {
+    const [user, repos, events, commitActivity, hourlyActivity, streakData, growthData, collaborators] = await Promise.all([
+      getGitHubUser(username).catch((error) => {
+        console.error("Failed to fetch user:", error);
+        throw error;
+      }),
+      getGitHubRepos(username).catch((error) => {
+        console.error("Failed to fetch repos:", error);
+        throw error;
+      }),
+      getGitHubEvents(username).catch(() => []),
+      getCommitActivity(username).catch(() => ({})),
+      getHourlyActivity(username).catch(() => ({})),
+      getStreakData(username).catch(() => ({ currentStreak: 0, longestStreak: 0, totalDays: 0 })),
+      getGrowthMetrics(username).catch(() => []),
+      getCollaborators(username).catch(() => []),
+    ]);
 
   // Calculate total stars and forks
   const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
@@ -221,4 +228,8 @@ export default async function UserDashboard({ username }: UserDashboardProps) {
       </div>
     </div>
   );
+  } catch (error) {
+    console.error("Error in UserDashboard:", error);
+    throw error;
+  }
 }

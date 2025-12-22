@@ -1,3 +1,5 @@
+import { getApiUrl } from "./utils";
+
 interface GitHubUser {
   login: string;
   name: string;
@@ -11,25 +13,22 @@ interface GitHubUser {
 export async function getGitHubUser(
   username: string
 ): Promise<GitHubUser> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  
-  if (!baseUrl) {
-    throw new Error("NEXT_PUBLIC_BASE_URL is not configured");
-  }
-
-  const res = await fetch(
-    `${baseUrl}/api/github?username=${username}`,
-    {
+  try {
+    const apiUrl = getApiUrl(`/api/github?username=${username}`);
+    const res = await fetch(apiUrl, {
       cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to fetch user: ${res.status}`);
     }
-  );
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || `Failed to fetch user: ${res.status}`);
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching GitHub user:", error);
+    throw error;
   }
-
-  return res.json();
 }
 interface GitHubEvent {
   id: string;
@@ -43,16 +42,19 @@ interface GitHubEvent {
 export async function getGitHubEvents(
   username: string
 ): Promise<GitHubEvent[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/github?username=${username}&type=events`,
-    { cache: "no-store" }
-  );
+  try {
+    const apiUrl = getApiUrl(`/api/github?username=${username}&type=events`);
+    const res = await fetch(apiUrl, { cache: "no-store" });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch activity");
+    if (!res.ok) {
+      return [];
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching GitHub events:", error);
+    return [];
   }
-
-  return res.json();
 }
 
 interface GitHubRepo {
@@ -70,119 +72,159 @@ interface GitHubRepo {
 export async function getGitHubRepos(
   username: string
 ): Promise<GitHubRepo[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  
-  if (!baseUrl) {
-    throw new Error("NEXT_PUBLIC_BASE_URL is not configured");
+  try {
+    const apiUrl = getApiUrl(`/api/github?username=${username}&type=repos`);
+    const res = await fetch(apiUrl, { cache: "no-store" });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to fetch repositories: ${res.status}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching GitHub repos:", error);
+    throw error;
   }
-
-  const res = await fetch(
-    `${baseUrl}/api/github?username=${username}&type=repos`,
-    { cache: "no-store" }
-  );
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || `Failed to fetch repositories: ${res.status}`);
-  }
-
-  return res.json();
 }
 
 export async function getCommitActivity(username: string) {
-  const repos = await getGitHubRepos(username);
-  const activity: Record<string, number> = {};
+  try {
+    const repos = await getGitHubRepos(username).catch(() => []);
+    if (repos.length === 0) return {};
+    
+    const activity: Record<string, number> = {};
+    const token = process.env.GITHUB_TOKEN;
 
-  await Promise.all(
-    repos.slice(0, 10).map(async (repo) => {
-      const res = await fetch(
-        `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=30`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-          },
+    await Promise.all(
+      repos.slice(0, 10).map(async (repo) => {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=30`,
+            {
+              headers: token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {},
+            }
+          );
+
+          if (!res.ok) return;
+
+          const commits = await res.json();
+          if (Array.isArray(commits)) {
+            commits.forEach((c: any) => {
+              if (c?.commit?.author?.date) {
+                const date = c.commit.author.date.slice(0, 10);
+                activity[date] = (activity[date] || 0) + 1;
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error fetching commits for ${repo.name}:`, error);
         }
-      );
+      })
+    );
 
-      if (!res.ok) return;
-
-      const commits = await res.json();
-      commits.forEach((c: any) => {
-        const date = c.commit.author.date.slice(0, 10);
-        activity[date] = (activity[date] || 0) + 1;
-      });
-    })
-  );
-
-  return activity;
+    return activity;
+  } catch (error) {
+    console.error("Error in getCommitActivity:", error);
+    return {};
+  }
 }
 
 export async function getHourlyActivity(username: string) {
-  const repos = await getGitHubRepos(username);
-  const hourlyActivity: Record<number, number> = {};
+  try {
+    const repos = await getGitHubRepos(username).catch(() => []);
+    if (repos.length === 0) return {};
+    
+    const hourlyActivity: Record<number, number> = {};
+    const token = process.env.GITHUB_TOKEN;
 
-  await Promise.all(
-    repos.slice(0, 10).map(async (repo) => {
-      const res = await fetch(
-        `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=100`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-          },
+    await Promise.all(
+      repos.slice(0, 10).map(async (repo) => {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=100`,
+            {
+              headers: token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {},
+            }
+          );
+
+          if (!res.ok) return;
+
+          const commits = await res.json();
+          if (Array.isArray(commits)) {
+            commits.forEach((c: any) => {
+              if (c?.commit?.author?.date) {
+                const date = new Date(c.commit.author.date);
+                if (!isNaN(date.getTime())) {
+                  const hour = date.getHours();
+                  hourlyActivity[hour] = (hourlyActivity[hour] || 0) + 1;
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error fetching hourly activity for ${repo.name}:`, error);
         }
-      );
+      })
+    );
 
-      if (!res.ok) return;
-
-      const commits = await res.json();
-      commits.forEach((c: any) => {
-        const date = new Date(c.commit.author.date);
-        const hour = date.getHours();
-        hourlyActivity[hour] = (hourlyActivity[hour] || 0) + 1;
-      });
-    })
-  );
-
-  return hourlyActivity;
+    return hourlyActivity;
+  } catch (error) {
+    console.error("Error in getHourlyActivity:", error);
+    return {};
+  }
 }
 
 export async function getStreakData(username: string) {
-  const activity = await getCommitActivity(username);
-  const dates = Object.keys(activity).sort();
-  
-  if (dates.length === 0) {
+  try {
+    const activity = await getCommitActivity(username).catch(() => ({}));
+    const dates = Object.keys(activity).sort();
+    
+    if (dates.length === 0) {
+      return { currentStreak: 0, longestStreak: 0, totalDays: 0 };
+    }
+
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Calculate current streak
+    let checkDate = new Date(today);
+    while (dates.includes(formatDate(checkDate))) {
+      currentStreak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // Calculate longest streak
+    for (let i = 0; i < dates.length; i++) {
+      if (i === 0 || isConsecutive(dates[i - 1], dates[i])) {
+        tempStreak++;
+      } else {
+        longestStreak = Math.max(longestStreak, tempStreak);
+        tempStreak = 1;
+      }
+    }
+    longestStreak = Math.max(longestStreak, tempStreak);
+
+    return {
+      currentStreak,
+      longestStreak,
+      totalDays: dates.length,
+    };
+  } catch (error) {
+    console.error("Error in getStreakData:", error);
     return { currentStreak: 0, longestStreak: 0, totalDays: 0 };
   }
-
-  let currentStreak = 0;
-  let longestStreak = 0;
-  let tempStreak = 0;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Calculate current streak
-  let checkDate = new Date(today);
-  while (dates.includes(formatDate(checkDate))) {
-    currentStreak++;
-    checkDate.setDate(checkDate.getDate() - 1);
-  }
-
-  // Calculate longest streak
-  for (let i = 0; i < dates.length; i++) {
-    if (i === 0 || isConsecutive(dates[i - 1], dates[i])) {
-      tempStreak++;
-    } else {
-      longestStreak = Math.max(longestStreak, tempStreak);
-      tempStreak = 1;
-    }
-  }
-  longestStreak = Math.max(longestStreak, tempStreak);
-
-  return {
-    currentStreak,
-    longestStreak,
-    totalDays: dates.length,
-  };
 }
 
 function formatDate(date: Date): string {
@@ -197,27 +239,29 @@ function isConsecutive(date1: string, date2: string): boolean {
 }
 
 export async function getRepoDetails(username: string, repoName: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  
-  if (!baseUrl) {
-    throw new Error("NEXT_PUBLIC_BASE_URL is not configured");
-  }
+  try {
+    const token = process.env.GITHUB_TOKEN;
+    const res = await fetch(
+      `https://api.github.com/repos/${username}/${repoName}`,
+      {
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {},
+        next: { revalidate: 3600 },
+      }
+    );
 
-  const res = await fetch(
-    `https://api.github.com/repos/${username}/${repoName}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-      },
-      next: { revalidate: 3600 },
+    if (!res.ok) {
+      throw new Error(`Failed to fetch repository: ${res.status}`);
     }
-  );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch repository");
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching repo details:", error);
+    throw error;
   }
-
-  return res.json();
 }
 
 export async function getPRStats(username: string, repoName: string) {
@@ -259,26 +303,35 @@ export async function getPRStats(username: string, repoName: string) {
 
 export async function getIssues(username: string, repoName: string) {
   try {
+    const token = process.env.GITHUB_TOKEN;
     const res = await fetch(
       `https://api.github.com/repos/${username}/${repoName}/issues?state=all&per_page=100`,
       {
-        headers: {
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        },
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {},
       }
     );
 
     if (!res.ok) return { open: 0, closed: 0, labels: {} };
 
     const issues = await res.json();
+    if (!Array.isArray(issues)) return { open: 0, closed: 0, labels: {} };
+    
     const open = issues.filter((issue: any) => issue.state === "open").length;
     const closed = issues.filter((issue: any) => issue.state === "closed").length;
 
     const labels: Record<string, number> = {};
     issues.forEach((issue: any) => {
-      issue.labels.forEach((label: any) => {
-        labels[label.name] = (labels[label.name] || 0) + 1;
-      });
+      if (Array.isArray(issue.labels)) {
+        issue.labels.forEach((label: any) => {
+          if (label?.name) {
+            labels[label.name] = (labels[label.name] || 0) + 1;
+          }
+        });
+      }
     });
 
     return { open, closed, labels };
@@ -308,12 +361,15 @@ export async function getReleases(username: string, repoName: string) {
 
 export async function getContributors(username: string, repoName: string) {
   try {
+    const token = process.env.GITHUB_TOKEN;
     const res = await fetch(
       `https://api.github.com/repos/${username}/${repoName}/contributors?per_page=30`,
       {
-        headers: {
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        },
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {},
       }
     );
 
@@ -326,63 +382,83 @@ export async function getContributors(username: string, repoName: string) {
 }
 
 export async function getCollaborators(username: string) {
-  const repos = await getGitHubRepos(username);
-  const collaborators: Record<string, number> = {};
+  try {
+    const repos = await getGitHubRepos(username).catch(() => []);
+    if (repos.length === 0) return [];
+    
+    const collaborators: Record<string, number> = {};
+    const token = process.env.GITHUB_TOKEN;
 
-  await Promise.all(
-    repos.slice(0, 20).map(async (repo) => {
-      try {
-        const res = await fetch(
-          `https://api.github.com/repos/${username}/${repo.name}/contributors?per_page=10`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-            },
+    await Promise.all(
+      repos.slice(0, 20).map(async (repo) => {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${username}/${repo.name}/contributors?per_page=10`,
+            {
+              headers: token
+                ? {
+                    Authorization: `Bearer ${token}`,
+                  }
+                : {},
+            }
+          );
+
+          if (!res.ok) return;
+
+          const contributors = await res.json();
+          if (Array.isArray(contributors)) {
+            contributors.forEach((contributor: any) => {
+              if (contributor?.login && contributor.login !== username) {
+                collaborators[contributor.login] =
+                  (collaborators[contributor.login] || 0) + (contributor.contributions || 0);
+              }
+            });
           }
-        );
+        } catch (error) {
+          console.error(`Error fetching collaborators for ${repo.name}:`, error);
+        }
+      })
+    );
 
-        if (!res.ok) return;
-
-        const contributors = await res.json();
-        contributors.forEach((contributor: any) => {
-          if (contributor.login !== username) {
-            collaborators[contributor.login] =
-              (collaborators[contributor.login] || 0) + contributor.contributions;
-          }
-        });
-      } catch {
-        // Ignore errors
-      }
-    })
-  );
-
-  return Object.entries(collaborators)
-    .map(([login, contributions]) => ({
-      login,
-      contributions,
-    }))
-    .sort((a, b) => b.contributions - a.contributions)
-    .slice(0, 30);
+    return Object.entries(collaborators)
+      .map(([login, contributions]) => ({
+        login,
+        contributions,
+      }))
+      .sort((a, b) => b.contributions - a.contributions)
+      .slice(0, 30);
+  } catch (error) {
+    console.error("Error in getCollaborators:", error);
+    return [];
+  }
 }
 
 export async function getGrowthMetrics(username: string) {
-  // Simulated growth data - in production, you'd fetch historical data
-  // For now, we'll use current data and simulate growth
-  const user = await getGitHubUser(username);
-  const repos = await getGitHubRepos(username);
-  const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+  try {
+    const user = await getGitHubUser(username).catch(() => null);
+    const repos = await getGitHubRepos(username).catch(() => []);
+    
+    if (!user || repos.length === 0) {
+      return [];
+    }
+    
+    const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
 
-  // Generate monthly data for the last 12 months
-  const months = Array.from({ length: 12 }, (_, i) => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - (11 - i));
-    return {
-      date: date.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
-      followers: Math.round(user.followers * (0.3 + (i / 12) * 0.7)),
-      stars: Math.round(totalStars * (0.2 + (i / 12) * 0.8)),
-      repos: Math.round(user.public_repos * (0.4 + (i / 12) * 0.6)),
-    };
-  });
+    // Generate monthly data for the last 12 months
+    const months = Array.from({ length: 12 }, (_, i) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - (11 - i));
+      return {
+        date: date.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+        followers: Math.round(user.followers * (0.3 + (i / 12) * 0.7)),
+        stars: Math.round(totalStars * (0.2 + (i / 12) * 0.8)),
+        repos: Math.round(user.public_repos * (0.4 + (i / 12) * 0.6)),
+      };
+    });
 
-  return months;
+    return months;
+  } catch (error) {
+    console.error("Error in getGrowthMetrics:", error);
+    return [];
+  }
 }

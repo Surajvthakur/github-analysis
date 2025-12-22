@@ -23,28 +23,41 @@ export async function GET(request: Request) {
   }
 
   try {
-    const response = await fetch(
-      url,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        },
-        next: { revalidate: 3600 }, // ISR caching
-      }
-    );
+    const token = process.env.GITHUB_TOKEN;
+    const headers: HeadersInit = token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {};
+
+    const response = await fetch(url, {
+      headers,
+      next: { revalidate: 3600 }, // ISR caching
+    });
 
     if (!response.ok) {
+      const errorText = await response.text().catch(() => "Unknown error");
+      console.error(`GitHub API error: ${response.status} - ${errorText}`);
+      
+      if (response.status === 404) {
+        return NextResponse.json(
+          { error: "GitHub user not found" },
+          { status: 404 }
+        );
+      }
+      
       return NextResponse.json(
-        { error: "GitHub user not found" },
-        { status: 404 }
+        { error: `GitHub API error: ${response.status}` },
+        { status: response.status }
       );
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Error in GitHub API route:", error);
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Something went wrong", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

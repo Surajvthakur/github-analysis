@@ -27,19 +27,23 @@ export default function LiveActivityFeed({
     const fetchActivities = async () => {
       try {
         const res = await fetch(
-          `/api/github?username=${username}&type=events`
+          `/api/github?username=${username}&type=events`,
+          { cache: "no-store" }
         );
         if (res.ok) {
           const events = await res.json();
-          const recentEvents = events
-            .slice(0, 10)
-            .map((event: any) => ({
-              id: event.id,
-              type: event.type,
-              repo: event.repo.name,
-              timestamp: new Date(event.created_at),
-            }));
-          setActivities(recentEvents);
+          if (Array.isArray(events)) {
+            const recentEvents = events
+              .slice(0, 10)
+              .map((event: any) => ({
+                id: event.id,
+                type: event.type,
+                repo: event.repo?.name || "Unknown",
+                timestamp: new Date(event.created_at),
+              }))
+              .filter((event) => !isNaN(event.timestamp.getTime()));
+            setActivities(recentEvents);
+          }
         }
       } catch (error) {
         console.error("Error fetching activities:", error);
