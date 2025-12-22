@@ -1,6 +1,7 @@
 "use client";
 
 import SearchBar from "./components/SearchBar";
+import CompareUsers from "./components/CompareUsers";
 import { motion } from "framer-motion";
 
 export default function HomePage() {
@@ -23,19 +24,39 @@ export default function HomePage() {
         </p>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="w-full max-w-md"
-      >
-        <SearchBar />
-      </motion.div>
+      <div className="w-full max-w-5xl space-y-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full max-w-md mx-auto"
+        >
+          <SearchBar />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="w-full flex justify-center"
+        >
+          <div className="relative w-full max-w-md">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-gray-900 text-gray-400">OR</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <CompareUsers />
+      </div>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
         className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full"
       >
         {[
