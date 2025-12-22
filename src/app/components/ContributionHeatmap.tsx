@@ -20,12 +20,12 @@ export default function ContributionHeatmap({
 
         const intensity =
           count === 0
-            ? "bg-gray-200"
+            ? "bg-gray-800"
             : count < 3
-            ? "bg-green-300"
+            ? "bg-green-900"
             : count < 6
-            ? "bg-green-500"
-            : "bg-green-700";
+            ? "bg-green-700"
+            : "bg-green-500";
 
         return (
           <div
