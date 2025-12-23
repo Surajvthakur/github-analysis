@@ -175,7 +175,11 @@ export default function RepoListClient({
                 <span>🍴 {repo.forks_count}</span>
                 {repo.updated_at && (
                   <span className="text-xs">
-                    Updated {new Date(repo.updated_at).toLocaleDateString()}
+                    Updated {new Date(repo.updated_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    })}
                   </span>
                 )}
               </div>
