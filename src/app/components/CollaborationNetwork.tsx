@@ -18,10 +18,15 @@ export default function CollaborationNetwork({
   const [network, setNetwork] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
   const [contributors] = useState(() =>
-    initialContributors.map((c) => ({
-      ...c,
-      avatar_url: c.avatar_url || `https://github.com/${c.login}.png`,
-    }))
+    initialContributors.map((c) => {
+      // Use avatar_url from API if available, otherwise use GitHub's avatar service
+      // GitHub's avatar service handles bots and special characters correctly
+      const encodedLogin = encodeURIComponent(c.login);
+      return {
+        ...c,
+        avatar_url: c.avatar_url || `https://avatars.githubusercontent.com/${encodedLogin}`,
+      };
+    })
   );
 
   useEffect(() => {
@@ -39,18 +44,22 @@ export default function CollaborationNetwork({
         if (!networkRef.current) return;
 
         // Create nodes
-        const nodes = contributors.map((contributor) => ({
-          id: contributor.login,
-          label: contributor.login,
-          value: contributor.contributions,
-          shape: "circularImage",
-          image: contributor.avatar_url || `https://github.com/${contributor.login}.png`,
-          size: Math.max(20, Math.min(50, contributor.contributions / 10)),
-          color: {
-            border: "#3b82f6",
-            background: "#1f2937",
-          },
-        }));
+        const nodes = contributors.map((contributor) => {
+          // Use avatar_url from API if available, otherwise use GitHub's avatar service
+          const encodedLogin = encodeURIComponent(contributor.login);
+          return {
+            id: contributor.login,
+            label: contributor.login,
+            value: contributor.contributions,
+            shape: "circularImage",
+            image: contributor.avatar_url || `https://avatars.githubusercontent.com/${encodedLogin}`,
+            size: Math.max(20, Math.min(50, contributor.contributions / 10)),
+            color: {
+              border: "#3b82f6",
+              background: "#1f2937",
+            },
+          };
+        });
 
         // Create edges (connect all contributors to show collaboration)
         const edges = [];

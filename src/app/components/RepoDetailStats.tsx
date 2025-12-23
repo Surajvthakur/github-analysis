@@ -90,13 +90,21 @@ export default function RepoDetailStats({
           <div className="p-4 rounded-lg bg-gray-900/50 border border-gray-700">
             <p className="text-sm text-gray-400 mb-2">Created</p>
             <p className="text-gray-200 font-semibold">
-              {new Date(repo.created_at).toLocaleDateString()}
+              {new Date(repo.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+              })}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-gray-900/50 border border-gray-700">
             <p className="text-sm text-gray-400 mb-2">Last Updated</p>
             <p className="text-gray-200 font-semibold">
-              {new Date(repo.updated_at).toLocaleDateString()}
+              {new Date(repo.updated_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+              })}
             </p>
           </div>
         </div>

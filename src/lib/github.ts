@@ -1,4 +1,4 @@
-// Note: Server components use relative URLs, client components use getApiUrl from utils
+import { headers } from "next/headers";
 
 interface GitHubUser {
   login: string;
@@ -10,12 +10,47 @@ interface GitHubUser {
   public_repos: number;
 }
 
+async function getServerUrl(): Promise<string> {
+  // Try to get from headers first (works in server components)
+  try {
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol = headersList.get("x-forwarded-proto") || "http";
+    if (host) {
+      return `${protocol}://${host}`;
+    }
+  } catch (error) {
+    // Headers might not be available in all contexts
+  }
+  
+  // Fallback to environment variables
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+  
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // Development fallback
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
+  }
+  
+  // Last resort
+  return "";
+}
+
 export async function getGitHubUser(
   username: string
 ): Promise<GitHubUser> {
   try {
-    // Use relative URL in server components - Next.js handles this automatically
-    const apiUrl = `/api/github?username=${username}`;
+    const baseUrl = await getServerUrl();
+    if (!baseUrl) {
+      throw new Error("Unable to determine server URL. Please set NEXT_PUBLIC_BASE_URL environment variable.");
+    }
+    
+    const apiUrl = `${baseUrl}/api/github?username=${username}`;
     const res = await fetch(apiUrl, {
       cache: "no-store",
     });
@@ -44,8 +79,12 @@ export async function getGitHubEvents(
   username: string
 ): Promise<GitHubEvent[]> {
   try {
-    // Use relative URL in server components
-    const apiUrl = `/api/github?username=${username}&type=events`;
+    const baseUrl = await getServerUrl();
+    if (!baseUrl) {
+      return [];
+    }
+    
+    const apiUrl = `${baseUrl}/api/github?username=${username}&type=events`;
     const res = await fetch(apiUrl, { cache: "no-store" });
 
     if (!res.ok) {
@@ -75,8 +114,12 @@ export async function getGitHubRepos(
   username: string
 ): Promise<GitHubRepo[]> {
   try {
-    // Use relative URL in server components
-    const apiUrl = `/api/github?username=${username}&type=repos`;
+    const baseUrl = await getServerUrl();
+    if (!baseUrl) {
+      throw new Error("Unable to determine server URL. Please set NEXT_PUBLIC_BASE_URL environment variable.");
+    }
+    
+    const apiUrl = `${baseUrl}/api/github?username=${username}&type=repos`;
     const res = await fetch(apiUrl, { cache: "no-store" });
 
     if (!res.ok) {
@@ -389,7 +432,7 @@ export async function getCollaborators(username: string) {
     const repos = await getGitHubRepos(username).catch(() => []);
     if (repos.length === 0) return [];
     
-    const collaborators: Record<string, number> = {};
+    const collaborators: Record<string, { contributions: number; avatar_url?: string }> = {};
     const token = process.env.GITHUB_TOKEN;
 
     await Promise.all(
@@ -412,8 +455,13 @@ export async function getCollaborators(username: string) {
           if (Array.isArray(contributors)) {
             contributors.forEach((contributor: any) => {
               if (contributor?.login && contributor.login !== username) {
-                collaborators[contributor.login] =
-                  (collaborators[contributor.login] || 0) + (contributor.contributions || 0);
+                if (!collaborators[contributor.login]) {
+                  collaborators[contributor.login] = {
+                    contributions: 0,
+                    avatar_url: contributor.avatar_url,
+                  };
+                }
+                collaborators[contributor.login].contributions += (contributor.contributions || 0);
               }
             });
           }
@@ -424,9 +472,10 @@ export async function getCollaborators(username: string) {
     );
 
     return Object.entries(collaborators)
-      .map(([login, contributions]) => ({
+      .map(([login, data]) => ({
         login,
-        contributions,
+        contributions: data.contributions,
+        avatar_url: data.avatar_url,
       }))
       .sort((a, b) => b.contributions - a.contributions)
       .slice(0, 30);
