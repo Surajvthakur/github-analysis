@@ -3,28 +3,43 @@
 import SearchBar from "./components/SearchBar";
 import CompareUsers from "./components/CompareUsers";
 import { motion } from "framer-motion";
+import { Component as EtherealShadow } from "@/components/etheral-shadow";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-8"
-      >
-        <h2 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-          GitHub Analytics
-        </h2>
-        <p className="text-xl text-gray-300 mb-2">
-          Discover insights from GitHub profiles
-        </p>
-        <p className="text-gray-400 max-w-2xl mx-auto">
-          Visualize repositories, contributions, languages, and activity with interactive charts and beautiful visualizations
-        </p>
-      </motion.div>
+    <div className="relative flex flex-col items-center justify-center min-h-[60vh]">
+      {/* Ethereal Shadow Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
+        <EtherealShadow
+          color="rgba(128, 128, 128, 1)"
+          animation={{ scale: 100, speed: 100 }}
+          noise={{ opacity: 100, scale: 1 }}
+          sizing="fill"
+          showText={false}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 w-full flex flex-col items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-5xl md:text-6xl font-bold mb-4 ">
+            GitHub Analytics
+          </h2>
+          <p className="text-xl text-gray-300 mb-2">
+            Discover insights from GitHub profiles
+          </p>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Visualize repositories, contributions, languages, and activity with interactive charts and beautiful visualizations
+          </p>
+        </motion.div>
 
-      <div className="w-full max-w-5xl space-y-8">
+        <div className="w-full max-w-5xl space-y-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -50,15 +65,15 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        <CompareUsers />
-      </div>
+          <CompareUsers />
+        </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full"
-      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full"
+        >
         {[
           { icon: "📊", title: "Interactive Charts", desc: "Bar, line, pie, radar, and more" },
           { icon: "🔥", title: "Heatmaps", desc: "Visualize contribution activity" },
@@ -78,6 +93,7 @@ export default function HomePage() {
           </motion.div>
         ))}
       </motion.div>
+      </div>
     </div>
   );
 }
