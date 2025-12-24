@@ -132,7 +132,7 @@ export default function CollaborationNetwork({
 
   if (!isClient) {
     return (
-      <div className="w-full h-96 rounded-lg bg-gray-900 border border-gray-700 flex items-center justify-center">
+      <div className="w-full h-[600px] rounded-lg bg-gray-900 border border-gray-700 flex items-center justify-center">
         <div className="text-gray-400">Loading network...</div>
       </div>
     );
@@ -153,7 +153,7 @@ export default function CollaborationNetwork({
       </p>
       <div
         ref={networkRef}
-        className="w-full h-96 rounded-lg bg-gray-900 border border-gray-700"
+        className="w-full h-[600px] rounded-lg bg-gray-900 border border-gray-700"
       />
       <div className="mt-4 text-xs text-gray-500">
         {contributors.length} contributors • Drag nodes to explore
