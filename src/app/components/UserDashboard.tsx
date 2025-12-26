@@ -16,6 +16,7 @@ import CollaborationNetwork from "./CollaborationNetwork";
 import LiveActivityFeed from "./LiveActivityFeed";
 import { calculateDeveloperScore } from "@/lib/analytics";
 import { calculateAchievements } from "@/lib/gamification";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 interface UserDashboardProps {
   username: string;
@@ -146,86 +147,86 @@ export default async function UserDashboard({ username }: UserDashboardProps) {
       <AnimatedStats stats={stats} />
 
       {/* Developer Score */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <DeveloperScore
           score={developerScore.score}
           breakdown={developerScore.breakdown}
           level={developerScore.level}
         />
-      </div>
+      </LiquidGlassCard>
 
       {/* Streak Tracker */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <StreakTracker
           currentStreak={streakData.currentStreak}
           longestStreak={streakData.longestStreak}
           totalDays={streakData.totalDays}
         />
-      </div>
+      </LiquidGlassCard>
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Repository Statistics */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <RepoStatsChart repos={repos} />
-        </div>
+        </LiquidGlassCard>
 
         {/* Star History */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <StarHistory repos={repos} />
-        </div>
+        </LiquidGlassCard>
 
         {/* Language Trend */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <LanguageTrendChart repos={repos} />
-        </div>
+        </LiquidGlassCard>
 
         {/* Enhanced Heatmap */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <EnhancedHeatmap data={commitActivity} />
-        </div>
+        </LiquidGlassCard>
 
         {/* Repository Network */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <RepoNetwork repos={repos} />
-        </div>
+        </LiquidGlassCard>
 
         {/* Radar Chart */}
         {radarData.length > 0 && (
-          <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+          <LiquidGlassCard className="p-6" draggable={false}>
             <SkillRadarChart data={radarData} />
-          </div>
+          </LiquidGlassCard>
         )}
 
         {/* Hourly Activity */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <HourlyActivityChart data={hourlyActivity} />
-        </div>
+        </LiquidGlassCard>
       </div>
 
       {/* Growth Trends */}
       {growthData.length > 0 && (
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <GrowthTrends data={growthData} />
-        </div>
+        </LiquidGlassCard>
       )}
 
       {/* Achievements */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <AchievementBadges achievements={achievements} />
-      </div>
+      </LiquidGlassCard>
 
       {/* Collaboration Network */}
       {collaborators.length > 0 && (
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <CollaborationNetwork contributors={collaborators} />
-        </div>
+        </LiquidGlassCard>
       )}
 
       {/* Live Activity Feed */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <LiveActivityFeed username={username} />
-      </div>
+      </LiquidGlassCard>
     </div>
   );
   } catch (error) {

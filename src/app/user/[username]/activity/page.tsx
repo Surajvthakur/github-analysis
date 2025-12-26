@@ -4,6 +4,7 @@ import ActivityTimeline from "@/app/components/ActivityTimeline";
 import EventTypeChart from "@/app/components/EventTypeChart";
 import EnhancedHeatmap from "@/app/components/EnhancedHeatmap";
 import { getCommitActivity } from "@/lib/github";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 function formatEvent(type: string) {
   switch (type) {
@@ -36,23 +37,23 @@ export default async function ActivityPage({
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Activity Timeline */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <ActivityTimeline events={events} />
-        </div>
+        </LiquidGlassCard>
 
         {/* Event Type Chart */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <EventTypeChart events={events} />
-        </div>
+        </LiquidGlassCard>
       </div>
 
       {/* Enhanced Heatmap */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <EnhancedHeatmap data={commitActivity} />
-      </div>
+      </LiquidGlassCard>
 
       {/* Recent Activity List */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <h3 className="text-2xl font-bold mb-6 text-gray-100">Recent Activity</h3>
         <div className="space-y-4">
           {events.slice(0, 20).map((event) => (
@@ -72,7 +73,7 @@ export default async function ActivityPage({
             </div>
           ))}
         </div>
-      </div>
+      </LiquidGlassCard>
     </div>
   );
 }
