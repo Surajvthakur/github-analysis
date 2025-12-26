@@ -85,7 +85,7 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
             whileHover={{ y: -5, scale: 1.05 }}
-            className="p-6 rounded-xl bg-gray-800/90 backdrop-blur border border-gray-700 shadow-lg text-center"
+            className="p-6 rounded-xl bg-transparent  border border-gray-700 shadow-lg text-center"
           >
             <div className="text-4xl mb-3">{feature.icon}</div>
             <h3 className="font-bold text-lg mb-2 text-gray-100">{feature.title}</h3>
