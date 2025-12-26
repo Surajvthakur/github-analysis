@@ -3,6 +3,7 @@ import RepoDetailStats from "@/app/components/RepoDetailStats";
 import PRAnalytics from "@/app/components/PRAnalytics";
 import IssueTracker from "@/app/components/IssueTracker";
 import Link from "next/link";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 interface RepoPageProps {
   params: Promise<{
@@ -72,32 +73,32 @@ export default async function RepoPage({ params }: RepoPageProps) {
       </div>
 
       {/* Repository Stats */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <RepoDetailStats repo={repo} contributors={contributors} />
-      </div>
+      </LiquidGlassCard>
 
       {/* PR Analytics */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <PRAnalytics
           open={prStats.open}
           closed={prStats.closed}
           merged={prStats.merged}
           avgMergeTime={prStats.avgMergeTime}
         />
-      </div>
+      </LiquidGlassCard>
 
       {/* Issue Tracker */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <IssueTracker
           open={issues.open}
           closed={issues.closed}
           labels={issues.labels}
         />
-      </div>
+      </LiquidGlassCard>
 
       {/* Releases */}
       {releases.length > 0 && (
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <h3 className="text-xl font-bold mb-4 text-gray-100">Recent Releases</h3>
           <div className="space-y-4">
             {releases.slice(0, 10).map((release: any) => (
@@ -121,7 +122,7 @@ export default async function RepoPage({ params }: RepoPageProps) {
               </div>
             ))}
           </div>
-        </div>
+        </LiquidGlassCard>
       )}
     </div>
   );

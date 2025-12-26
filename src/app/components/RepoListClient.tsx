@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import AdvancedFilters, { FilterState } from "./AdvancedFilters";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 interface Repo {
   id: number;
@@ -145,9 +146,11 @@ export default function RepoListClient({
           </div>
         ) : (
           filteredRepos.map((repo) => (
-            <div
+            <LiquidGlassCard
               key={repo.id}
-              className="border border-gray-700 rounded-lg p-4 bg-gray-800/90 hover:bg-gray-800 transition-colors"
+              className="p-4"
+              draggable={false}
+              borderRadius="8px"
             >
               <div className="flex items-center gap-2">
                 <a
@@ -183,7 +186,7 @@ export default function RepoListClient({
                   </span>
                 )}
               </div>
-            </div>
+            </LiquidGlassCard>
           ))
         )}
       </div>

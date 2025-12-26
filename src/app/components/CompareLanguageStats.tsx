@@ -1,5 +1,6 @@
 import { getGitHubRepos } from "@/lib/github";
 import LanguageChart from "./LanguageChart";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 function aggregateLanguages(repos: any[]) {
   const map: Record<string, number> = {};
@@ -36,19 +37,19 @@ export default async function CompareLanguageStats({
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur p-6 shadow-lg border border-gray-700 w-[500px]">
+        <LiquidGlassCard className="p-6 w-[500px]" draggable={false}>
           <h3 className="text-lg font-semibold mb-4 text-center text-gray-100">
             {user1}
           </h3>
           <LanguageChart data={data1} />
-        </div>
+        </LiquidGlassCard>
 
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur p-6 shadow-lg border border-gray-700 w-[500px]">
+        <LiquidGlassCard className="p-6 w-[500px]" draggable={false}>
           <h3 className="text-lg font-semibold mb-4 text-center text-gray-100">
             {user2}
           </h3>
           <LanguageChart data={data2} />
-        </div>
+        </LiquidGlassCard>
       </div>
     </div>
   );

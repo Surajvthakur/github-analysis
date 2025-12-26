@@ -3,6 +3,7 @@ import CompareCard from "@/app/components/CompareCard";
 import CompareStats from "@/app/components/CompareStats";
 import CompareLanguageStats from "@/app/components/CompareLanguageStats";
 import ComparisonChart from "@/app/components/ComparisonChart";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 export default async function ComparePage({
   searchParams,
@@ -48,7 +49,7 @@ export default async function ComparePage({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        <LiquidGlassCard className="p-6" draggable={false}>
           <ComparisonChart
             user1={user1}
             user2={user2}
@@ -56,8 +57,8 @@ export default async function ComparePage({
             data2={totalStars2}
             label="Total Stars"
           />
-        </div>
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+        </LiquidGlassCard>
+        <LiquidGlassCard className="p-6" draggable={false}>
           <ComparisonChart
             user1={user1}
             user2={user2}
@@ -65,12 +66,12 @@ export default async function ComparePage({
             data2={totalForks2}
             label="Total Forks"
           />
-        </div>
+        </LiquidGlassCard>
       </div>
 
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <CompareStats user1={u1} user2={u2} />
-      </div>
+      </LiquidGlassCard>
 
       <CompareLanguageStats user1={user1} user2={user2} />
     </div>

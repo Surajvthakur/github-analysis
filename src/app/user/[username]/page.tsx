@@ -5,6 +5,7 @@ import RepoList from "@/app/components/RepoList";
 import { Suspense } from "react";
 import LanguageStats from "@/app/components/LanguageStats";
 import UserDashboard from "@/app/components/UserDashboard";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 interface UserPageProps {
   params: Promise<{
@@ -90,7 +91,7 @@ export default async function UserPage({ params }: UserPageProps) {
 
   return (
     <div>
-      <section className="flex gap-6 items-start mb-10 p-6 rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg border border-gray-700">
+      <LiquidGlassCard className="flex gap-6 items-start mb-10 p-6" draggable={false}>
         {/* Avatar */}
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-50"></div>
@@ -138,7 +139,7 @@ export default async function UserPage({ params }: UserPageProps) {
             </div>
           </div>
         </div>
-      </section>
+      </LiquidGlassCard>
 
       {/* Comprehensive Dashboard */}
       <Suspense fallback={<div className="animate-pulse">Loading dashboard...</div>}>

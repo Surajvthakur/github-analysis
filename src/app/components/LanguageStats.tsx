@@ -1,5 +1,6 @@
 import { getGitHubRepos } from "@/lib/github";
 import LanguageChart from "./LanguageChart";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 interface Repo {
   language: string | null;
@@ -37,9 +38,9 @@ export default async function LanguageStats({
         Language Usage
       </h3>
   
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
+      <LiquidGlassCard className="p-6" draggable={false}>
         <LanguageChart data={chartData} />
-      </div>
+      </LiquidGlassCard>
     </div>
   );
   

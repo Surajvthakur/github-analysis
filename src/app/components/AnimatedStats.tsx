@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 interface StatCard {
   label: string;
@@ -45,32 +46,34 @@ function StatCardComponent({ stat, countedValue, index }: { stat: StatCard; coun
   };
 
   return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{
-        opacity: 1,
-        y: isHovered ? -5 : 0,
-        rotateX: rotation.x,
-        rotateY: rotation.y,
-      }}
-      transition={{
-        opacity: { duration: 0.5, delay: index * 0.1 },
-        y: { type: "spring", stiffness: 300, damping: 20 },
-        rotateX: { type: "spring", stiffness: 300, damping: 20 },
-        rotateY: { type: "spring", stiffness: 300, damping: 20 },
-      }}
-      className="relative rounded-[24px] overflow-hidden"
-      style={{
-        transformStyle: "preserve-3d",
-        backgroundColor: "#0e131f",
-        boxShadow: "0 -10px 100px 10px rgba(78, 99, 255, 0.15), 0 0 10px 0 rgba(0, 0, 0, 0.5)",
-        minHeight: "180px",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
+    <LiquidGlassCard
+      className="relative overflow-hidden min-h-[180px]"
+      draggable={false}
+      borderRadius="24px"
     >
+      <motion.div
+        ref={cardRef}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{
+          opacity: 1,
+          y: isHovered ? -5 : 0,
+          rotateX: rotation.x,
+          rotateY: rotation.y,
+        }}
+        transition={{
+          opacity: { duration: 0.5, delay: index * 0.1 },
+          y: { type: "spring", stiffness: 300, damping: 20 },
+          rotateX: { type: "spring", stiffness: 300, damping: 20 },
+          rotateY: { type: "spring", stiffness: 300, damping: 20 },
+        }}
+        className="relative"
+        style={{
+          transformStyle: "preserve-3d",
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+      >
       {/* Glass reflection overlay */}
       <motion.div
         className="absolute inset-0 z-30 pointer-events-none"
@@ -183,7 +186,8 @@ function StatCardComponent({ stat, countedValue, index }: { stat: StatCard; coun
           </motion.p>
         </div>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </LiquidGlassCard>
   );
 }
 
