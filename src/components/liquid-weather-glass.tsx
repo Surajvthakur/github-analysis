@@ -76,21 +76,20 @@ export const LiquidGlassCard = ({
         collapsed: {
           width: width || 'auto',
           height: height || 'auto',
-          transition: {
-            duration: 0.4,
-            ease: [0.5, 1.5, 0.5, 1],
-          },
         },
         expanded: {
           width: expandedWidth || 'auto',
           height: expandedHeight || 'auto',
-          transition: {
-            duration: 0.4,
-            ease: [0.5, 1.5, 0.5, 1],
-          },
         },
       }
-    : {};
+    : undefined;
+
+  const containerTransition = expandable
+    ? {
+        duration: 0.4,
+        ease: "easeInOut" as const,
+      }
+    : undefined;
 
   const MotionComponent = draggable || expandable ? motion.div : 'div';
 
@@ -103,6 +102,7 @@ export const LiquidGlassCard = ({
               ? 'expanded'
               : 'collapsed'
             : undefined,
+          transition: expandable ? containerTransition : undefined,
           onClick: expandable ? handleToggleExpansion : undefined,
           drag: draggable,
           dragConstraints: draggable

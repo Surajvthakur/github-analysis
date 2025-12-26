@@ -15,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen flex flex-col bg-black text-gray-100 relative">
+      <body
+        className="min-h-screen flex flex-col bg-black text-gray-100 relative"
+        suppressHydrationWarning={true}
+      >
         {/* Ethereal Shadow Background - Applies to all pages */}
         <EtherealBackground />
         
