@@ -83,23 +83,23 @@ export function Component({
         if (animationEnabled) {
             // Animate hue rotation
             if (feColorMatrixRef.current) {
-                if (hueRotateAnimation.current) {
-                    hueRotateAnimation.current.stop();
-                }
-                hueRotateMotionValue.set(0);
-                hueRotateAnimation.current = animate(hueRotateMotionValue, 360, {
-                    duration: animationDuration / 25,
-                    repeat: Infinity,
-                    repeatType: "loop",
-                    repeatDelay: 0,
-                    ease: "linear",
-                    delay: 0,
-                    onUpdate: (value: number) => {
-                        if (feColorMatrixRef.current) {
-                            feColorMatrixRef.current.setAttribute("values", String(value));
-                        }
+            if (hueRotateAnimation.current) {
+                hueRotateAnimation.current.stop();
+            }
+            hueRotateMotionValue.set(0);
+            hueRotateAnimation.current = animate(hueRotateMotionValue, 360, {
+                duration: animationDuration / 25,
+                repeat: Infinity,
+                repeatType: "loop",
+                repeatDelay: 0,
+                ease: "linear",
+                delay: 0,
+                onUpdate: (value: number) => {
+                    if (feColorMatrixRef.current) {
+                        feColorMatrixRef.current.setAttribute("values", String(value));
                     }
-                });
+                }
+            });
             }
 
             // Animate turbulence for flowing waves - smoother animation

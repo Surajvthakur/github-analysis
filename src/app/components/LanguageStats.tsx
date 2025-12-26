@@ -1,5 +1,6 @@
 import { getGitHubRepos } from "@/lib/github";
 import LanguageChart from "./LanguageChart";
+import GlassCard from "./GlassCard";
 
 interface Repo {
   language: string | null;
@@ -37,9 +38,11 @@ export default async function LanguageStats({
         Language Usage
       </h3>
   
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-        <LanguageChart data={chartData} />
-      </div>
+      <GlassCard>
+        <div className="p-6">
+          <LanguageChart data={chartData} />
+        </div>
+      </GlassCard>
     </div>
   );
   

@@ -14,6 +14,7 @@ import GrowthTrends from "./GrowthTrends";
 import AchievementBadges from "./AchievementBadges";
 import CollaborationNetwork from "./CollaborationNetwork";
 import LiveActivityFeed from "./LiveActivityFeed";
+import GlassCard from "./GlassCard";
 import { calculateDeveloperScore } from "@/lib/analytics";
 import { calculateAchievements } from "@/lib/gamification";
 
@@ -146,86 +147,112 @@ export default async function UserDashboard({ username }: UserDashboardProps) {
       <AnimatedStats stats={stats} />
 
       {/* Developer Score */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-        <DeveloperScore
-          score={developerScore.score}
-          breakdown={developerScore.breakdown}
-          level={developerScore.level}
-        />
-      </div>
+      <GlassCard>
+        <div className="p-6">
+          <DeveloperScore
+            score={developerScore.score}
+            breakdown={developerScore.breakdown}
+            level={developerScore.level}
+          />
+        </div>
+      </GlassCard>
 
       {/* Streak Tracker */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-        <StreakTracker
-          currentStreak={streakData.currentStreak}
-          longestStreak={streakData.longestStreak}
-          totalDays={streakData.totalDays}
-        />
-      </div>
+      <GlassCard>
+        <div className="p-6">
+          <StreakTracker
+            currentStreak={streakData.currentStreak}
+            longestStreak={streakData.longestStreak}
+            totalDays={streakData.totalDays}
+          />
+        </div>
+      </GlassCard>
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Repository Statistics */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <RepoStatsChart repos={repos} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <RepoStatsChart repos={repos} />
+          </div>
+        </GlassCard>
 
         {/* Star History */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <StarHistory repos={repos} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <StarHistory repos={repos} />
+          </div>
+        </GlassCard>
 
         {/* Language Trend */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <LanguageTrendChart repos={repos} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <LanguageTrendChart repos={repos} />
+          </div>
+        </GlassCard>
 
         {/* Enhanced Heatmap */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <EnhancedHeatmap data={commitActivity} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <EnhancedHeatmap data={commitActivity} />
+          </div>
+        </GlassCard>
 
         {/* Repository Network */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <RepoNetwork repos={repos} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <RepoNetwork repos={repos} />
+          </div>
+        </GlassCard>
 
         {/* Radar Chart */}
         {radarData.length > 0 && (
-          <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-            <SkillRadarChart data={radarData} />
-          </div>
+          <GlassCard>
+            <div className="p-6">
+              <SkillRadarChart data={radarData} />
+            </div>
+          </GlassCard>
         )}
 
         {/* Hourly Activity */}
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <HourlyActivityChart data={hourlyActivity} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <HourlyActivityChart data={hourlyActivity} />
+          </div>
+        </GlassCard>
       </div>
 
       {/* Growth Trends */}
       {growthData.length > 0 && (
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <GrowthTrends data={growthData} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <GrowthTrends data={growthData} />
+          </div>
+        </GlassCard>
       )}
 
       {/* Achievements */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-        <AchievementBadges achievements={achievements} />
-      </div>
+      <GlassCard>
+        <div className="p-6">
+          <AchievementBadges achievements={achievements} />
+        </div>
+      </GlassCard>
 
       {/* Collaboration Network */}
       {collaborators.length > 0 && (
-        <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-          <CollaborationNetwork contributors={collaborators} />
-        </div>
+        <GlassCard>
+          <div className="p-6">
+            <CollaborationNetwork contributors={collaborators} />
+          </div>
+        </GlassCard>
       )}
 
       {/* Live Activity Feed */}
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur shadow-lg p-6 border border-gray-700">
-        <LiveActivityFeed username={username} />
-      </div>
+      <GlassCard>
+        <div className="p-6">
+          <LiveActivityFeed username={username} />
+        </div>
+      </GlassCard>
     </div>
   );
   } catch (error) {

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import AdvancedFilters, { FilterState } from "./AdvancedFilters";
+import GlassCard from "./GlassCard";
 
 interface Repo {
   id: number;
