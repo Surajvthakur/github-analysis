@@ -94,7 +94,7 @@ export default async function UserPage({ params }: UserPageProps) {
       <LiquidGlassCard className="flex gap-6 items-start mb-10 p-6" draggable={false}>
         {/* Avatar */}
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-50"></div>
+          <div className="absolute inset-0 "></div>
           <Image
             src={user.avatar_url}
             alt={user.login}
