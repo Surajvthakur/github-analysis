@@ -3,25 +3,12 @@
 import SearchBar from "./components/SearchBar";
 import CompareUsers from "./components/CompareUsers";
 import { motion } from "framer-motion";
-import { Component as EtherealShadow } from "@/components/etheral-shadow";
 
 export default function HomePage() {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[60vh]">
-      {/* Ethereal Shadow Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
-        <EtherealShadow
-          color="rgba(128, 128, 128, 1)"
-          animation={{ scale: 100, speed: 100 }}
-          noise={{ opacity: 100, scale: 1 }}
-          sizing="fill"
-          showText={false}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </div>
-      
       {/* Content */}
-      <div className="relative z-10 w-full flex flex-col items-center justify-center">
+      <div className="relative w-full flex flex-col items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

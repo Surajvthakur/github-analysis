@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
+import EtherealBackground from "./components/EtherealBackground";
 
 export const metadata: Metadata = {
   title: "GitHub Analytics",
@@ -14,9 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
+      <body className="min-h-screen flex flex-col bg-black text-gray-100 relative">
+        {/* Ethereal Shadow Background - Applies to all pages */}
+        <EtherealBackground />
+        
         {/* Header */}
-        <header className="bg-transparent">
+        <header className="bg-transparent relative z-10">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <Link href="/" className="hover:opacity-80 transition-opacity">
               <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -45,12 +49,12 @@ export default function RootLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
+        <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full relative z-10">
           {children}
         </main>
 
         {/* Footer */}
-        <footer className="bg-transparent">
+        <footer className="bg-transparent relative z-10">
           <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-400">
             © {new Date().getFullYear()} GitHub Analytics - Interactive Visualizations
           </div>
