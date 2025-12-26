@@ -72,7 +72,7 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full"
+          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full "
         >
         {[
           { icon: "📊", title: "Interactive Charts", desc: "Bar, line, pie, radar, and more" },

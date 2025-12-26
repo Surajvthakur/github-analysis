@@ -22,7 +22,7 @@ export default function CompareUsers() {
       transition={{ duration: 0.6, delay: 0.3 }}
       className="w-full max-w-2xl mx-auto"
     >
-      <div className="rounded-2xl bg-gray-800/90 backdrop-blur border border-gray-700 shadow-lg p-6">
+      <div className="rounded-2xl bg-transparent">
         <h3 className="text-2xl font-bold mb-4 text-gray-100 text-center">
           Compare Two Users
         </h3>

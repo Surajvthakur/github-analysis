@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className="min-h-screen flex flex-col bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
         {/* Header */}
-        <header className="border-b border-gray-700 bg-gray-800/90 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <header className="bg-transparent">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <Link href="/" className="hover:opacity-80 transition-opacity">
               <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -50,7 +50,7 @@ export default function RootLayout({
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-gray-700 bg-gray-800/90 backdrop-blur-lg mt-auto">
+        <footer className="bg-transparent">
           <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-400">
             © {new Date().getFullYear()} GitHub Analytics - Interactive Visualizations
           </div>
