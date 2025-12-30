@@ -3,6 +3,7 @@ import {
   getTrendingRepos,
   getLanguageStats,
   getGlobalDashboard,
+  getRepoStats,
 } from "@/lib/global";
 
 export async function GET(request: Request) {
@@ -25,6 +26,20 @@ export async function GET(request: Request) {
         return NextResponse.json(
           await getGlobalDashboard()
         );
+      case "repo": {
+        const name = searchParams.get("name");
+
+        if (!name) {
+            return NextResponse.json(
+            { error: "Repository name is required (owner/repo)" },
+            { status: 400 }
+            );
+        }
+
+        const repo = await getRepoStats(name);
+
+        return NextResponse.json({ repo });
+        }
 
       default:
         return NextResponse.json(
