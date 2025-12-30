@@ -52,15 +52,28 @@ export async function getTrendingRepos(limit = 10) {
 -------------------------------------------------- */
 
 export async function getLanguageStats() {
-    // Fetch top repositories to extract languages dynamically
-    const repoData = await githubFetch(
-        `${GITHUB_API}/search/repositories?q=stars:>1000&sort=stars&order=desc&per_page=100`
-    );
+    // Fetch multiple pages of top repositories to get more languages
+    const pages = [1, 2, 3, 4, 5]; // 5 pages x 100 repos = 500 top repos
 
-    // Aggregate languages from top repositories
+    const allRepos: any[] = [];
+
+    for (const page of pages) {
+        try {
+            const repoData = await githubFetch(
+                `${GITHUB_API}/search/repositories?q=stars:>500&sort=stars&order=desc&per_page=100&page=${page}`
+            );
+            if (repoData.items) {
+                allRepos.push(...repoData.items);
+            }
+        } catch (error) {
+            console.error(`Failed to fetch page ${page}:`, error);
+        }
+    }
+
+    // Aggregate languages from all repositories
     const languageMap: Record<string, { repoCount: number; totalStars: number }> = {};
 
-    for (const repo of repoData.items) {
+    for (const repo of allRepos) {
         const lang = repo.language;
         if (!lang) continue;
 

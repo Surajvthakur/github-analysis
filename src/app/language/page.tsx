@@ -8,7 +8,7 @@ import LanguageRadarComparison from "@/app/components/global/LanguageRadarCompar
 async function getLanguages() {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/global?type=languages`,
-        { next: { revalidate: 60 * 60 * 12 } } // 12 hours
+        { cache: 'no-store' } // Force fresh data
     );
 
     if (!res.ok) {
@@ -25,7 +25,7 @@ export default async function LanguagesPage() {
         <section className="space-y-14">
             {/* Header */}
             <header className="text-center mt-6">
-                <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold mb-4">
                     🌍 Programming Language Analytics
                 </h1>
                 <p className="text-gray-400 max-w-2xl mx-auto">
