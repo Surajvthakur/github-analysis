@@ -1,0 +1,126 @@
+const GITHUB_API = "https://api.github.com";
+const REVALIDATE_TIME = 60 * 60 * 6; // 6 hours
+
+async function githubFetch(url: string) {
+    const token = process.env.GITHUB_TOKEN;
+
+    const res = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        next: { revalidate: REVALIDATE_TIME },
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`GitHub API error ${res.status}: ${text}`);
+    }
+
+    return res.json();
+}
+
+/* -------------------------------------------------
+   TRENDING REPOSITORIES (RELEVANCE-BASED)
+-------------------------------------------------- */
+
+export async function getTrendingRepos(limit = 10) {
+    // Fetch high-star repos updated recently (proxy for activity)
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
+
+    const query = [
+        "stars:>10000",
+        `pushed:>${since.toISOString().split("T")[0]}`,
+    ].join(" ");
+
+    const data = await githubFetch(
+        `${GITHUB_API}/search/repositories?q=${encodeURIComponent(
+            query
+        )}&sort=stars&order=desc&per_page=${limit}`
+    );
+
+    return data.items.map((repo: any) => ({
+        name: repo.full_name,
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        language: repo.language,
+        url: repo.html_url,
+        updated_at: repo.updated_at,
+    }));
+}
+
+/* -------------------------------------------------
+   LANGUAGE POPULARITY (GLOBAL)
+-------------------------------------------------- */
+
+const TOP_LANGUAGES = [
+    "JavaScript",
+    "TypeScript",
+    "Python",
+    "Java",
+    "Go",
+    "C++",
+];
+
+export async function getLanguageStats() {
+    const results = await Promise.all(
+        TOP_LANGUAGES.map(async (language) => {
+            const data = await githubFetch(
+                `${GITHUB_API}/search/repositories?q=language:${language}&sort=stars&order=desc&per_page=100`
+            );
+
+            const totalStars = data.items.reduce(
+                (sum: number, repo: any) => sum + repo.stargazers_count,
+                0
+            );
+
+            return {
+                language,
+                repoCount: data.total_count,
+                totalStars,
+            };
+        })
+    );
+
+    return results;
+}
+
+/* -------------------------------------------------
+   GLOBAL DASHBOARD SUMMARY
+-------------------------------------------------- */
+
+export async function getGlobalDashboard() {
+    const [trending, languages] = await Promise.all([
+        getTrendingRepos(5),
+        getLanguageStats(),
+    ]);
+
+    return {
+        trending,
+        languages,
+        insights: generateInsights(trending, languages),
+    };
+}
+
+/* -------------------------------------------------
+   INSIGHTS (RULE-BASED)
+-------------------------------------------------- */
+
+function generateInsights(trending: any[], languages: any[]) {
+    const topLang = languages.sort(
+        (a, b) => b.repoCount - a.repoCount
+    )[0];
+
+    const hottestRepo = trending[0];
+
+    return [
+        {
+            title: "Most Popular Language",
+            value: topLang.language,
+            description: `${topLang.language} dominates GitHub by repository count.`,
+        },
+        {
+            title: "Hottest Repository",
+            value: hottestRepo.name,
+            description: `This repo leads the charts with ${hottestRepo.stars.toLocaleString()} stars.`,
+        },
+    ];
+}
