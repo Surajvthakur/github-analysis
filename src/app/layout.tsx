@@ -21,7 +21,7 @@ export default function RootLayout({
       >
         {/* Ethereal Shadow Background - Applies to all pages */}
         <EtherealBackground />
-        
+
         {/* Header */}
         <header className="bg-transparent relative z-10">
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -42,12 +42,44 @@ export default function RootLayout({
                 GitHub Analytics
               </h1>
             </Link>
-            <Link
-              href="/"
-              className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-700/50"
-            >
-              Home
-            </Link>
+            <nav className="flex items-center gap-1">
+              <Link
+                href="/"
+                className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-700/50"
+              >
+                Home
+              </Link>
+              <Link
+                href="/global"
+                className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-700/50"
+              >
+                Global
+              </Link>
+              <Link
+                href="/trending"
+                className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-700/50"
+              >
+                Trending
+              </Link>
+              <Link
+                href="/language"
+                className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-700/50"
+              >
+                Languages
+              </Link>
+              <Link
+                href="/compare"
+                className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-700/50"
+              >
+                Compare
+              </Link>
+              <Link
+                href="/compare-repos"
+                className="text-gray-300 hover:text-gray-100 transition-colors text-sm font-medium px-3 py-2 rounded-lg hover:bg-gray-700/50"
+              >
+                Compare Repos
+              </Link>
+            </nav>
           </div>
         </header>
 

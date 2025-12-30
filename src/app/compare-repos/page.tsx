@@ -1,6 +1,7 @@
 import RepoCompareCard from "@/app/components/global/RepoCompareCard";
 import RepoCompareStats from "@/app/components/global/RepoCompareStats";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
+import CompareRepos from "@/app/components/CompareRepos";
 
 async function getRepo(name: string) {
     const res = await fetch(
@@ -26,12 +27,11 @@ export default async function CompareReposPage({
     // Missing params
     if (!repo1 || !repo2) {
         return (
-            <div className="text-center mt-20 text-gray-600">
-                Please provide two repositories to compare.
-                <br />
-                <code className="block mt-2">
-                    /compare-repos?repo1=facebook/react&repo2=vuejs/vue
-                </code>
+            <div className="flex flex-col items-center justify-center min-h-[50vh]">
+                <h1 className="text-4xl font-bold mb-10 text-center">
+                    Repository Comparison
+                </h1>
+                <CompareRepos />
             </div>
         );
     }
