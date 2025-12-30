@@ -41,194 +41,194 @@ export default async function UserDashboard({ username }: UserDashboardProps) {
       getCollaborators(username).catch(() => []),
     ]);
 
-  // Calculate total stars and forks
-  const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
-  const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0);
-  const totalCommits = Object.values(commitActivity).reduce(
-    (sum, count) => sum + (count as number),
-    0
-  );
+    // Calculate total stars and forks
+    const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+    const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0);
+    const totalCommits = Object.values(commitActivity).reduce(
+      (sum, count) => sum + (count as number),
+      0
+    );
 
-  const stats = [
-    {
-      label: "Repositories",
-      value: user.public_repos,
-      icon: "📦",
-      color: "#3b82f6",
-    },
-    {
-      label: "Total Stars",
-      value: totalStars,
-      icon: "⭐",
-      color: "#f59e0b",
-    },
-    {
-      label: "Total Forks",
-      value: totalForks,
-      icon: "🍴",
-      color: "#10b981",
-    },
-    {
-      label: "Followers",
-      value: user.followers,
-      icon: "👥",
-      color: "#8b5cf6",
-    },
-    {
-      label: "Following",
-      value: user.following,
-      icon: "🔗",
-      color: "#ec4899",
-    },
-    {
-      label: "Recent Commits",
-      value: totalCommits,
-      icon: "💻",
-      color: "#06b6d4",
-    },
-  ];
+    const stats = [
+      {
+        label: "Repositories",
+        value: user.public_repos,
+        icon: "📦",
+        color: "#3b82f6",
+      },
+      {
+        label: "Total Stars",
+        value: totalStars,
+        icon: "⭐",
+        color: "#f59e0b",
+      },
+      {
+        label: "Total Forks",
+        value: totalForks,
+        icon: "🍴",
+        color: "#10b981",
+      },
+      {
+        label: "Followers",
+        value: user.followers,
+        icon: "👥",
+        color: "#8b5cf6",
+      },
+      {
+        label: "Following",
+        value: user.following,
+        icon: "🔗",
+        color: "#ec4899",
+      },
+      {
+        label: "Recent Commits",
+        value: totalCommits,
+        icon: "💻",
+        color: "#06b6d4",
+      },
+    ];
 
-  // Prepare radar chart data
-  const languageData: Record<string, { count: number; stars: number; forks: number }> = {};
-  repos.forEach((repo) => {
-    if (!repo.language) return;
-    if (!languageData[repo.language]) {
-      languageData[repo.language] = { count: 0, stars: 0, forks: 0 };
-    }
-    languageData[repo.language].count++;
-    languageData[repo.language].stars += repo.stargazers_count;
-    languageData[repo.language].forks += repo.forks_count;
-  });
+    // Prepare radar chart data
+    const languageData: Record<string, { count: number; stars: number; forks: number }> = {};
+    repos.forEach((repo) => {
+      if (!repo.language) return;
+      if (!languageData[repo.language]) {
+        languageData[repo.language] = { count: 0, stars: 0, forks: 0 };
+      }
+      languageData[repo.language].count++;
+      languageData[repo.language].stars += repo.stargazers_count;
+      languageData[repo.language].forks += repo.forks_count;
+    });
 
-  const radarData = Object.entries(languageData)
-    .map(([language, data]) => ({
-      language,
-      count: data.count,
-      stars: data.stars,
-      forks: data.forks,
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 8);
+    const radarData = Object.entries(languageData)
+      .map(([language, data]) => ({
+        language,
+        count: data.count,
+        stars: data.stars,
+        forks: data.forks,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
 
-  // Calculate developer score
-  const developerScore = calculateDeveloperScore({
-    repos: user.public_repos,
-    stars: totalStars,
-    forks: totalForks,
-    followers: user.followers,
-    following: user.following,
-    commits: totalCommits,
-    languages: Object.keys(languageData).length,
-    contributions: totalCommits,
-  });
+    // Calculate developer score
+    const developerScore = calculateDeveloperScore({
+      repos: user.public_repos,
+      stars: totalStars,
+      forks: totalForks,
+      followers: user.followers,
+      following: user.following,
+      commits: totalCommits,
+      languages: Object.keys(languageData).length,
+      contributions: totalCommits,
+    });
 
-  // Calculate achievements
-  const achievements = calculateAchievements({
-    repos: user.public_repos,
-    stars: totalStars,
-    forks: totalForks,
-    followers: user.followers,
-    commits: totalCommits,
-    contributions: totalCommits,
-  });
+    // Calculate achievements
+    const achievements = calculateAchievements({
+      repos: user.public_repos,
+      stars: totalStars,
+      forks: totalForks,
+      followers: user.followers,
+      commits: totalCommits,
+      contributions: totalCommits,
+    });
 
-  return (
-    <div id="dashboard" className="space-y-8">
-      {/* Export Button */}
-      <div className="flex justify-end">
-        <ExportButton
-          elementId="dashboard"
-          filename={`${username}-analytics`}
-          title={`${username} - GitHub Analytics`}
-        />
-      </div>
+    return (
+      <div id="dashboard" className="space-y-8">
+        {/* Export Button */}
+        <div className="flex justify-end">
+          <ExportButton
+            elementId="dashboard"
+            filename={`${username}-analytics`}
+            title={`${username} - GitHub Analytics`}
+          />
+        </div>
 
-      {/* Animated Stats */}
-      <AnimatedStats stats={stats} />
+        {/* Animated Stats */}
+        <AnimatedStats stats={stats} />
 
-      {/* Developer Score */}
-      <LiquidGlassCard className="p-6" draggable={false}>
-        <DeveloperScore
-          score={developerScore.score}
-          breakdown={developerScore.breakdown}
-          level={developerScore.level}
-        />
-      </LiquidGlassCard>
-
-      {/* Streak Tracker */}
-      <LiquidGlassCard className="p-6" draggable={false}>
-        <StreakTracker
-          currentStreak={streakData.currentStreak}
-          longestStreak={streakData.longestStreak}
-          totalDays={streakData.totalDays}
-        />
-      </LiquidGlassCard>
-
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Repository Statistics */}
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <RepoStatsChart repos={repos} />
+        {/* Developer Score */}
+        <LiquidGlassCard className="p-6" draggable={true}>
+          <DeveloperScore
+            score={developerScore.score}
+            breakdown={developerScore.breakdown}
+            level={developerScore.level}
+          />
         </LiquidGlassCard>
 
-        {/* Star History */}
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <StarHistory repos={repos} />
+        {/* Streak Tracker */}
+        <LiquidGlassCard className="p-6" draggable={true}>
+          <StreakTracker
+            currentStreak={streakData.currentStreak}
+            longestStreak={streakData.longestStreak}
+            totalDays={streakData.totalDays}
+          />
         </LiquidGlassCard>
 
-        {/* Language Trend */}
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <LanguageTrendChart repos={repos} />
-        </LiquidGlassCard>
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Repository Statistics */}
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <RepoStatsChart repos={repos} />
+          </LiquidGlassCard>
 
-        {/* Enhanced Heatmap */}
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <EnhancedHeatmap data={commitActivity} />
-        </LiquidGlassCard>
+          {/* Star History */}
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <StarHistory repos={repos} />
+          </LiquidGlassCard>
 
-        {/* Repository Network */}
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <RepoNetwork repos={repos} />
-        </LiquidGlassCard>
+          {/* Language Trend */}
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <LanguageTrendChart repos={repos} />
+          </LiquidGlassCard>
 
-        {/* Radar Chart */}
-        {radarData.length > 0 && (
-          <LiquidGlassCard className="p-6" draggable={false}>
-            <SkillRadarChart data={radarData} />
+          {/* Enhanced Heatmap */}
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <EnhancedHeatmap data={commitActivity} />
+          </LiquidGlassCard>
+
+          {/* Repository Network */}
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <RepoNetwork repos={repos} />
+          </LiquidGlassCard>
+
+          {/* Radar Chart */}
+          {radarData.length > 0 && (
+            <LiquidGlassCard className="p-6" draggable={true}>
+              <SkillRadarChart data={radarData} />
+            </LiquidGlassCard>
+          )}
+
+          {/* Hourly Activity */}
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <HourlyActivityChart data={hourlyActivity} />
+          </LiquidGlassCard>
+        </div>
+
+        {/* Growth Trends */}
+        {growthData.length > 0 && (
+          <LiquidGlassCard className="p-6" draggable={true}>
+            <GrowthTrends data={growthData} />
           </LiquidGlassCard>
         )}
 
-        {/* Hourly Activity */}
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <HourlyActivityChart data={hourlyActivity} />
+        {/* Achievements */}
+        <LiquidGlassCard className="p-6" draggable={true}>
+          <AchievementBadges achievements={achievements} />
+        </LiquidGlassCard>
+
+        {/* Collaboration Network */}
+        {collaborators.length > 0 && (
+          <LiquidGlassCard className="p-6" draggable={false}>
+            <CollaborationNetwork contributors={collaborators} />
+          </LiquidGlassCard>
+        )}
+
+        {/* Live Activity Feed */}
+        <LiquidGlassCard className="p-6" draggable={true}>
+          <LiveActivityFeed username={username} />
         </LiquidGlassCard>
       </div>
-
-      {/* Growth Trends */}
-      {growthData.length > 0 && (
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <GrowthTrends data={growthData} />
-        </LiquidGlassCard>
-      )}
-
-      {/* Achievements */}
-      <LiquidGlassCard className="p-6" draggable={false}>
-        <AchievementBadges achievements={achievements} />
-      </LiquidGlassCard>
-
-      {/* Collaboration Network */}
-      {collaborators.length > 0 && (
-        <LiquidGlassCard className="p-6" draggable={false}>
-          <CollaborationNetwork contributors={collaborators} />
-        </LiquidGlassCard>
-      )}
-
-      {/* Live Activity Feed */}
-      <LiquidGlassCard className="p-6" draggable={false}>
-        <LiveActivityFeed username={username} />
-      </LiquidGlassCard>
-    </div>
-  );
+    );
   } catch (error) {
     console.error("Error in UserDashboard:", error);
     throw error;

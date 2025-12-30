@@ -38,7 +38,7 @@ export default async function LanguageStats({
         Language Usage
       </h3>
   
-      <LiquidGlassCard className="p-6" draggable={false}>
+      <LiquidGlassCard className="p-6" draggable={true}>
         <LanguageChart data={chartData} />
       </LiquidGlassCard>
     </div>
