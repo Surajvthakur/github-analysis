@@ -124,3 +124,30 @@ function generateInsights(trending: any[], languages: any[]) {
         },
     ];
 }
+/* -------------------------------------------------
+   REPOSITORY ANALYTICS (SINGLE REPO)
+-------------------------------------------------- */
+
+export async function getRepoStats(repoFullName: string) {
+  // repoFullName format: owner/repo
+  if (!repoFullName.includes("/")) {
+    throw new Error("Invalid repository name format");
+  }
+
+  const data = await githubFetch(
+    `${GITHUB_API}/repos/${repoFullName}`
+  );
+
+  return {
+    name: data.full_name,
+    stars: data.stargazers_count,
+    forks: data.forks_count,
+    openIssues: data.open_issues_count,
+    watchers: data.subscribers_count,
+    updatedAt: data.updated_at,
+    sizeKB: data.size,
+    language: data.language,
+    url: data.html_url,
+    description: data.description,
+  };
+}
