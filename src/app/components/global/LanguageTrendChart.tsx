@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from "recharts";
 
 interface Language {
-    name: string;
+    name?: string;
+    language?: string;
     repoCount: number;
-    totalBytes: number;
-    percentage: number;
+    totalBytes?: number;
+    totalStars?: number;
+    percentage?: number;
 }
 
 interface LanguageTrendChartProps {
@@ -16,15 +18,16 @@ interface LanguageTrendChartProps {
 
 export default function LanguageTrendChart({ languages }: LanguageTrendChartProps) {
     // Filter out invalid entries and take top 20
+    // Handle both 'name' and 'language' field names
     const topLanguages = languages
-        .filter(lang => lang && lang.name)
+        .filter(lang => lang && (lang.name || lang.language))
         .slice(0, 20);
 
     const scatterData = topLanguages.map((lang, i) => ({
-        name: lang.name,
-        x: lang.repoCount,
-        y: lang.totalBytes / 1000000, // Convert to MB
-        z: lang.percentage * 100, // For bubble size
+        name: lang.name || lang.language || 'Unknown',
+        x: lang.repoCount || 0,
+        y: (lang.totalBytes || lang.totalStars || 0) / 1000, // Convert to K
+        z: (lang.percentage || lang.repoCount || 1) * 100, // For bubble size
         color: getLanguageColor(i)
     }));
 

@@ -1,13 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Language {
-    name: string;
+    name?: string;
+    language?: string;
     repoCount: number;
-    totalBytes: number;
-    percentage: number;
+    totalStars?: number;
+    totalBytes?: number;
+    percentage?: number;
 }
 
 interface LanguageTreemapProps {
@@ -16,9 +18,8 @@ interface LanguageTreemapProps {
 
 interface TreemapNode {
     name: string;
-    value: number;
     repoCount: number;
-    percentage: number;
+    stars: number;
     x: number;
     y: number;
     width: number;
@@ -26,213 +27,170 @@ interface TreemapNode {
     color: string;
 }
 
+const COLORS = [
+    "#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981",
+    "#06b6d4", "#f43f5e", "#a855f7", "#14b8a6", "#f97316",
+];
+
 export default function LanguageTreemap({ languages }: LanguageTreemapProps) {
-    const [hoveredLang, setHoveredLang] = useState<string | null>(null);
+    const [hoveredLang, setHoveredLang] = useState<TreemapNode | null>(null);
 
-    // Filter out invalid entries and take top 15
-    const topLanguages = languages
-        .filter(lang => lang && lang.name && lang.totalBytes > 0)
-        .slice(0, 15);
-
-    const getLanguageColor = (index: number) => {
-        const colors = [
-            "#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981",
-            "#06b6d4", "#f43f5e", "#a855f7", "#14b8a6", "#f97316",
-            "#6366f1", "#84cc16", "#22c55e", "#eab308", "#ef4444"
-        ];
-        return colors[index % colors.length];
-    };
-
-    // Simple treemap layout algorithm (squarified)
-    const createTreemap = (): TreemapNode[] => {
+    const nodes = useMemo(() => {
         const width = 800;
         const height = 500;
-        const totalValue = topLanguages.reduce((sum, lang) => sum + lang.totalBytes, 0);
 
-        const nodes: TreemapNode[] = [];
-        let currentX = 0;
-        let currentY = 0;
-        let rowHeight = 0;
-        let rowWidth = 0;
+        // 1. Normalize and Sort Data
+        const data = languages
+            .map((lang) => ({
+                name: lang.name || lang.language || "Unknown",
+                repoCount: lang.repoCount || 0,
+                stars: lang.totalStars || 0,
+                // We use stars (or repoCount) as the 'weight' for area calculation
+                weight: lang.totalStars || lang.repoCount || 1,
+            }))
+            .sort((a, b) => b.weight - a.weight)
+            .slice(0, 15);
 
-        topLanguages.forEach((lang, i) => {
-            const area = (lang.totalBytes / totalValue) * (width * height);
-            const nodeWidth = Math.sqrt(area * (width / height));
-            const nodeHeight = area / nodeWidth;
+        const totalWeight = data.reduce((sum, item) => sum + item.weight, 0);
+        const treemapNodes: TreemapNode[] = [];
 
-            if (currentX + nodeWidth > width && currentX > 0) {
-                currentY += rowHeight;
-                currentX = 0;
-                rowHeight = 0;
-                rowWidth = 0;
+        // 2. Recursive Squarified-lite Partitioning
+        const partition = (
+            items: typeof data,
+            x: number,
+            y: number,
+            w: number,
+            h: number,
+            colorOffset: number
+        ) => {
+            if (items.length === 0) return;
+
+            if (items.length === 1) {
+                treemapNodes.push({
+                    ...items[0],
+                    x, y, width: w, height: h,
+                    color: COLORS[(colorOffset) % COLORS.length],
+                });
+                return;
             }
 
-            nodes.push({
-                name: lang.name,
-                value: lang.totalBytes,
-                repoCount: lang.repoCount,
-                percentage: lang.percentage,
-                x: currentX,
-                y: currentY,
-                width: nodeWidth,
-                height: nodeHeight,
-                color: getLanguageColor(i)
-            });
+            // Split items into two groups
+            const halfIndex = Math.ceil(items.length / 2);
+            const firstPart = items.slice(0, halfIndex);
+            const secondPart = items.slice(halfIndex);
 
-            currentX += nodeWidth;
-            rowHeight = Math.max(rowHeight, nodeHeight);
-            rowWidth += nodeWidth;
-        });
+            const firstWeight = firstPart.reduce((sum, item) => sum + item.weight, 0);
+            const totalPartWeight = items.reduce((sum, item) => sum + item.weight, 0);
+            const ratio = firstWeight / totalPartWeight;
 
-        return nodes;
-    };
+            if (w > h) {
+                // Split horizontally
+                const currentW = w * ratio;
+                partition(firstPart, x, y, currentW, h, colorOffset);
+                partition(secondPart, x + currentW, y, w - currentW, h, colorOffset + halfIndex);
+            } else {
+                // Split vertically
+                const currentH = h * ratio;
+                partition(firstPart, x, y, w, currentH, colorOffset);
+                partition(secondPart, x, y + currentH, w, h - currentH, colorOffset + halfIndex);
+            }
+        };
 
-    const nodes = createTreemap();
+        partition(data, 0, 0, width, height, 0);
+        return treemapNodes;
+    }, [languages]);
+
+    if (!nodes.length) return <div className="p-8 text-center text-gray-500">No data available</div>;
 
     return (
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
+        <div className="relative w-full bg-slate-950 p-4 rounded-xl border border-slate-800 shadow-2xl overflow-hidden">
             <svg
                 viewBox="0 0 800 500"
                 className="w-full h-auto"
-                style={{ minHeight: "500px" }}
+                style={{ borderRadius: "8px" }}
             >
-                <defs>
-                    {nodes.map((node, i) => (
-                        <linearGradient key={`treemap-gradient-${node.name}-${i}`} id={`treemap-gradient-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor={node.color} stopOpacity="0.9" />
-                            <stop offset="100%" stopColor={node.color} stopOpacity="0.6" />
-                        </linearGradient>
-                    ))}
-                    <filter id="treemap-shadow">
-                        <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3" />
-                    </filter>
-                </defs>
-
                 {nodes.map((node, i) => {
-                    const isHovered = hoveredLang === node.name;
-                    const fontSize = Math.min(node.width, node.height) / 8;
-                    const showDetails = node.width > 80 && node.height > 60;
+                    const isHovered = hoveredLang?.name === node.name;
+                    const showText = node.width > 70 && node.height > 40;
 
                     return (
-                        <g key={`treemap-${node.name}-${i}`}>
+                        <g
+                            key={node.name}
+                            onMouseEnter={() => setHoveredLang(node.name === hoveredLang?.name ? hoveredLang : node)}
+                            onMouseLeave={() => setHoveredLang(null)}
+                            style={{ cursor: "pointer" }}
+                        >
                             <motion.rect
-                                initial={{ opacity: 0, scale: 0.8 }}
+                                initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{
                                     opacity: 1,
-                                    scale: isHovered ? 0.98 : 1,
-                                    x: node.x,
-                                    y: node.y
+                                    scale: 1,
+                                    fill: isHovered ? node.color : node.color,
+                                    fillOpacity: isHovered ? 1 : 0.8
                                 }}
-                                transition={{ delay: i * 0.03, type: "spring", stiffness: 200 }}
-                                x={node.x}
-                                y={node.y}
-                                width={node.width}
-                                height={node.height}
-                                fill={`url(#treemap-gradient-${i})`}
-                                stroke={isHovered ? "#ffffff" : "#1f2937"}
-                                strokeWidth={isHovered ? "3" : "2"}
-                                rx="8"
-                                style={{ cursor: "pointer" }}
-                                filter={isHovered ? "url(#treemap-shadow)" : undefined}
-                                onMouseEnter={() => setHoveredLang(node.name)}
-                                onMouseLeave={() => setHoveredLang(null)}
+                                x={node.x + 2}
+                                y={node.y + 2}
+                                width={Math.max(0, node.width - 4)}
+                                height={Math.max(0, node.height - 4)}
+                                rx={6}
+                                stroke={isHovered ? "#fff" : "transparent"}
+                                strokeWidth={2}
+                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
                             />
 
-                            {/* Language name */}
-                            <text
-                                x={node.x + node.width / 2}
-                                y={node.y + node.height / 2 - (showDetails ? fontSize / 2 : 0)}
-                                textAnchor="middle"
-                                fill="white"
-                                fontSize={Math.max(Math.min(fontSize, 18), 10)}
-                                fontWeight="700"
-                                pointerEvents="none"
-                            >
-                                {node.name && node.name.length > 15 ? node.name.substring(0, 12) + "..." : (node.name || '')}
-                            </text>
-
-                            {/* Details when space allows */}
-                            {showDetails && (
-                                <>
-                                    <text
-                                        x={node.x + node.width / 2}
-                                        y={node.y + node.height / 2 + fontSize}
-                                        textAnchor="middle"
-                                        fill="rgba(255,255,255,0.8)"
-                                        fontSize={Math.max(fontSize * 0.6, 10)}
-                                        pointerEvents="none"
-                                    >
-                                        {node.percentage.toFixed(1)}%
-                                    </text>
-                                    <text
-                                        x={node.x + node.width / 2}
-                                        y={node.y + node.height / 2 + fontSize * 1.8}
-                                        textAnchor="middle"
-                                        fill="rgba(255,255,255,0.6)"
-                                        fontSize={Math.max(fontSize * 0.5, 9)}
-                                        pointerEvents="none"
-                                    >
-                                        {(node.value / 1000000).toFixed(1)}MB
-                                    </text>
-                                </>
-                            )}
-
-                            {/* Hover overlay */}
-                            {isHovered && (
-                                <motion.g
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
+                            {showText && (
+                                <foreignObject
+                                    x={node.x + 6}
+                                    y={node.y + 6}
+                                    width={node.width - 12}
+                                    height={node.height - 12}
+                                    className="pointer-events-none"
                                 >
-                                    <rect
-                                        x={node.x + 10}
-                                        y={node.y + 10}
-                                        width={Math.min(node.width - 20, 180)}
-                                        height="80"
-                                        fill="#000000"
-                                        fillOpacity="0.9"
-                                        stroke={node.color}
-                                        strokeWidth="2"
-                                        rx="8"
-                                    />
-                                    <text
-                                        x={node.x + 20}
-                                        y={node.y + 32}
-                                        fill="#f3f4f6"
-                                        fontSize="14"
-                                        fontWeight="600"
-                                    >
-                                        {node.name}
-                                    </text>
-                                    <text
-                                        x={node.x + 20}
-                                        y={node.y + 50}
-                                        fill="#9ca3af"
-                                        fontSize="11"
-                                    >
-                                        Size: {(node.value / 1000000).toFixed(2)} MB
-                                    </text>
-                                    <text
-                                        x={node.x + 20}
-                                        y={node.y + 66}
-                                        fill="#9ca3af"
-                                        fontSize="11"
-                                    >
-                                        Repos: {node.repoCount.toLocaleString()}
-                                    </text>
-                                    <text
-                                        x={node.x + 20}
-                                        y={node.y + 82}
-                                        fill="#9ca3af"
-                                        fontSize="11"
-                                    >
-                                        Share: {node.percentage.toFixed(2)}%
-                                    </text>
-                                </motion.g>
+                                    <div className="flex flex-col items-center justify-center h-full text-white overflow-hidden text-center">
+                                        <p className="font-bold text-sm sm:text-base truncate w-full">
+                                            {node.name}
+                                        </p>
+                                        {node.height > 70 && (
+                                            <div className="mt-1 space-y-0.5 opacity-90">
+                                                <p className="text-[10px] whitespace-nowrap">
+                                                    {node.repoCount.toLocaleString()} repos
+                                                </p>
+                                                <p className="text-[10px] font-medium text-blue-100">
+                                                    {node.stars.toLocaleString()} stars
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </foreignObject>
                             )}
                         </g>
                     );
                 })}
             </svg>
+
+            {/* Dynamic Tooltip for small items or extra detail */}
+            <AnimatePresence>
+                {hoveredLang && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute bottom-6 left-6 bg-slate-900/95 border border-slate-700 p-3 rounded-lg shadow-xl backdrop-blur-md pointer-events-none"
+                    >
+                        <p className="font-bold text-white text-lg">{hoveredLang.name}</p>
+                        <div className="flex gap-4 mt-1">
+                            <div className="text-xs text-slate-400">
+                                <span className="block text-slate-200 font-semibold">{hoveredLang.repoCount.toLocaleString()}</span>
+                                Repositories
+                            </div>
+                            <div className="text-xs text-slate-400">
+                                <span className="block text-slate-200 font-semibold">{hoveredLang.stars.toLocaleString()}</span>
+                                Total Stars
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

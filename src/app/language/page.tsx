@@ -50,15 +50,13 @@ export default async function LanguagesPage() {
                 </div>
                 <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6">
                     <div className="text-3xl font-bold text-green-400">
-                        {data.languages.reduce((sum: number, lang: any) => sum + lang.totalBytes, 0) > 1000000000
-                            ? `${(data.languages.reduce((sum: number, lang: any) => sum + lang.totalBytes, 0) / 1000000000).toFixed(1)}B`
-                            : `${(data.languages.reduce((sum: number, lang: any) => sum + lang.totalBytes, 0) / 1000000).toFixed(1)}M`}
+                        {data.languages.reduce((sum: number, lang: any) => sum + (lang.totalStars || 0), 0).toLocaleString()}
                     </div>
-                    <div className="text-sm text-gray-400 mt-1">Total Bytes</div>
+                    <div className="text-sm text-gray-400 mt-1">Total Stars</div>
                 </div>
                 <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-xl p-6">
                     <div className="text-3xl font-bold text-orange-400">
-                        {data.languages[0]?.name || 'N/A'}
+                        {data.languages[0]?.language || 'N/A'}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">Most Popular</div>
                 </div>

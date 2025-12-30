@@ -51,36 +51,36 @@ export async function getTrendingRepos(limit = 10) {
    LANGUAGE POPULARITY (GLOBAL)
 -------------------------------------------------- */
 
-const TOP_LANGUAGES = [
-    "JavaScript",
-    "TypeScript",
-    "Python",
-    "Java",
-    "Go",
-    "C++",
-];
-
 export async function getLanguageStats() {
-    const results = await Promise.all(
-        TOP_LANGUAGES.map(async (language) => {
-            const data = await githubFetch(
-                `${GITHUB_API}/search/repositories?q=language:${language}&sort=stars&order=desc&per_page=100`
-            );
-
-            const totalStars = data.items.reduce(
-                (sum: number, repo: any) => sum + repo.stargazers_count,
-                0
-            );
-
-            return {
-                language,
-                repoCount: data.total_count,
-                totalStars,
-            };
-        })
+    // Fetch top repositories to extract languages dynamically
+    const repoData = await githubFetch(
+        `${GITHUB_API}/search/repositories?q=stars:>1000&sort=stars&order=desc&per_page=100`
     );
 
-    return results;
+    // Aggregate languages from top repositories
+    const languageMap: Record<string, { repoCount: number; totalStars: number }> = {};
+
+    for (const repo of repoData.items) {
+        const lang = repo.language;
+        if (!lang) continue;
+
+        if (!languageMap[lang]) {
+            languageMap[lang] = { repoCount: 0, totalStars: 0 };
+        }
+        languageMap[lang].repoCount += 1;
+        languageMap[lang].totalStars += repo.stargazers_count || 0;
+    }
+
+    // Convert to array and sort by repo count
+    const languages = Object.entries(languageMap)
+        .map(([language, stats]) => ({
+            language,
+            repoCount: stats.repoCount,
+            totalStars: stats.totalStars,
+        }))
+        .sort((a, b) => b.repoCount - a.repoCount);
+
+    return languages;
 }
 
 /* -------------------------------------------------
@@ -129,25 +129,25 @@ function generateInsights(trending: any[], languages: any[]) {
 -------------------------------------------------- */
 
 export async function getRepoStats(repoFullName: string) {
-  // repoFullName format: owner/repo
-  if (!repoFullName.includes("/")) {
-    throw new Error("Invalid repository name format");
-  }
+    // repoFullName format: owner/repo
+    if (!repoFullName.includes("/")) {
+        throw new Error("Invalid repository name format");
+    }
 
-  const data = await githubFetch(
-    `${GITHUB_API}/repos/${repoFullName}`
-  );
+    const data = await githubFetch(
+        `${GITHUB_API}/repos/${repoFullName}`
+    );
 
-  return {
-    name: data.full_name,
-    stars: data.stargazers_count,
-    forks: data.forks_count,
-    openIssues: data.open_issues_count,
-    watchers: data.subscribers_count,
-    updatedAt: data.updated_at,
-    sizeKB: data.size,
-    language: data.language,
-    url: data.html_url,
-    description: data.description,
-  };
+    return {
+        name: data.full_name,
+        stars: data.stargazers_count,
+        forks: data.forks_count,
+        openIssues: data.open_issues_count,
+        watchers: data.subscribers_count,
+        updatedAt: data.updated_at,
+        sizeKB: data.size,
+        language: data.language,
+        url: data.html_url,
+        description: data.description,
+    };
 }
