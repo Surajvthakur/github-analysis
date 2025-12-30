@@ -4,6 +4,7 @@ import CompareStats from "@/app/components/CompareStats";
 import CompareLanguageStats from "@/app/components/CompareLanguageStats";
 import ComparisonChart from "@/app/components/ComparisonChart";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
+import CompareUsers from "@/app/components/CompareUsers";
 
 export default async function ComparePage({
   searchParams,
@@ -14,13 +15,11 @@ export default async function ComparePage({
 
   if (!user1 || !user2) {
     return (
-      <div className="text-center mt-20">
-        <p className="text-gray-300 text-lg">
-          Please provide two usernames to compare.
-        </p>
-        <p className="text-sm text-gray-400 mt-2">
-          Use the format: /compare?user1=username1&user2=username2
-        </p>
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <h1 className="text-4xl font-bold mb-10 text-center">
+          GitHub Profile Comparison
+        </h1>
+        <CompareUsers />
       </div>
     );
   }
