@@ -22,9 +22,12 @@ export default function DeveloperScore({
   breakdown,
   level,
 }: DeveloperScoreProps) {
+    // Normalize all values to 0-100 scale
+  const maxValue = Math.max(...Object.values(breakdown));
   const radarData = Object.entries(breakdown).map(([key, value]) => ({
-    metric: key.charAt(0).toUpperCase() + key.slice(1),
-    value: Math.round(value),
+    metric: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim(),
+    value: maxValue > 0 ? Math.round((value / maxValue) * 100) : 0,
+    originalValue: Math.round(value),
   }));
 
   const getScoreColor = (score: number) => {
