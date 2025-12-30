@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatNumber } from "@/lib/format";
 
 interface Language {
     name?: string;
@@ -153,10 +154,10 @@ export default function LanguageTreemap({ languages }: LanguageTreemapProps) {
                                         {node.height > 70 && (
                                             <div className="mt-1 space-y-0.5 opacity-90">
                                                 <p className="text-[10px] whitespace-nowrap">
-                                                    {node.repoCount.toLocaleString()} repos
+                                                    {formatNumber(node.repoCount)} repos
                                                 </p>
                                                 <p className="text-[10px] font-medium text-blue-100">
-                                                    {node.stars.toLocaleString()} stars
+                                                    {formatNumber(node.stars)} stars
                                                 </p>
                                             </div>
                                         )}
@@ -180,11 +181,11 @@ export default function LanguageTreemap({ languages }: LanguageTreemapProps) {
                         <p className="font-bold text-white text-lg">{hoveredLang.name}</p>
                         <div className="flex gap-4 mt-1">
                             <div className="text-xs text-slate-400">
-                                <span className="block text-slate-200 font-semibold">{hoveredLang.repoCount.toLocaleString()}</span>
+                                <span className="block text-slate-200 font-semibold">{formatNumber(hoveredLang.repoCount)}</span>
                                 Repositories
                             </div>
                             <div className="text-xs text-slate-400">
-                                <span className="block text-slate-200 font-semibold">{hoveredLang.stars.toLocaleString()}</span>
+                                <span className="block text-slate-200 font-semibold">{formatNumber(hoveredLang.stars)}</span>
                                 Total Stars
                             </div>
                         </div>

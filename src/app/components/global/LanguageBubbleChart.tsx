@@ -16,6 +16,11 @@ interface LanguageBubbleChartProps {
     languages: Language[];
 }
 
+// Use a fixed locale to prevent hydration mismatch between server and client
+const formatNumber = (num: number): string => {
+    return new Intl.NumberFormat('en-US').format(num);
+};
+
 export default function LanguageBubbleChart({ languages }: LanguageBubbleChartProps) {
     const [hoveredLang, setHoveredLang] = useState<string | null>(null);
 
@@ -150,7 +155,7 @@ export default function LanguageBubbleChart({ languages }: LanguageBubbleChartPr
                                 fontSize={size > 70 ? "11" : "9"}
                                 pointerEvents="none"
                             >
-                                {lang.repoCount.toLocaleString()}
+                                {formatNumber(lang.repoCount)}
                             </text>
 
                             {/* Hover tooltip */}
@@ -186,7 +191,7 @@ export default function LanguageBubbleChart({ languages }: LanguageBubbleChartPr
                                         fill="#9ca3af"
                                         fontSize="10"
                                     >
-                                        {lang.repoCount.toLocaleString()} repos
+                                        {formatNumber(lang.repoCount)} repos
                                     </text>
                                     <text
                                         x={positions[i].x}
@@ -195,7 +200,7 @@ export default function LanguageBubbleChart({ languages }: LanguageBubbleChartPr
                                         fill="#9ca3af"
                                         fontSize="10"
                                     >
-                                        {lang.value.toLocaleString()} stars
+                                        {formatNumber(lang.value)} stars
                                     </text>
                                 </motion.g>
                             )}
