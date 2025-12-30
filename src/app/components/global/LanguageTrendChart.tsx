@@ -67,7 +67,7 @@ export default function LanguageTrendChart({ languages }: LanguageTrendChartProp
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700"
+            className="border-gray-700"
         >
             <ResponsiveContainer width="100%" height={500}>
                 <ScatterChart margin={{ top: 20, right: 20, bottom: 60, left: 60 }}>

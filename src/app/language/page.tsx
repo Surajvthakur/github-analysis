@@ -4,6 +4,7 @@ import LanguageBubbleChart from "@/app/components/global/LanguageBubbleChart";
 import LanguageTreemap from "@/app/components/global/LanguageTreemap";
 import LanguageTrendChart from "@/app/components/global/LanguageTrendChart";
 import LanguageRadarComparison from "@/app/components/global/LanguageRadarComparison";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 async function getLanguages() {
     const res = await fetch(
@@ -71,7 +72,9 @@ export default async function LanguagesPage() {
                 <p className="text-gray-400 text-sm mb-4">
                     Bubble size represents total bytes, position shows repository distribution
                 </p>
-                <LanguageBubbleChart languages={data.languages} />
+                <LiquidGlassCard>
+                    <LanguageBubbleChart languages={data.languages} />
+                </LiquidGlassCard>
             </section>
 
             {/* Treemap - Code Distribution */}
@@ -104,7 +107,9 @@ export default async function LanguagesPage() {
                 <p className="text-gray-400 text-sm mb-4">
                     Comparing repository count vs code volume trends
                 </p>
-                <LanguageTrendChart languages={data.languages} />
+                <LiquidGlassCard>
+                    <LanguageTrendChart languages={data.languages} />
+                </LiquidGlassCard>
             </section>
 
             {/* Radar Comparison */}
@@ -116,7 +121,9 @@ export default async function LanguagesPage() {
                 <p className="text-gray-400 text-sm mb-4">
                     Multi-dimensional comparison of leading programming languages
                 </p>
-                <LanguageRadarComparison languages={data.languages} />
+                <LiquidGlassCard>
+                    <LanguageRadarComparison languages={data.languages} />
+                </LiquidGlassCard>
             </section>
 
             {/* Rankings */}

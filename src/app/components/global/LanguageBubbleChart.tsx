@@ -69,7 +69,7 @@ export default function LanguageBubbleChart({ languages }: LanguageBubbleChartPr
     });
 
     return (
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
+        <div className="border-gray-700">
             <svg
                 viewBox="0 0 800 560"
                 className="w-full h-auto"
