@@ -1,6 +1,6 @@
 "use client";
 
-import { eachDayOfInterval, subDays, format, startOfWeek, endOfWeek } from "date-fns";
+import { eachDayOfInterval, subDays, format, startOfWeek } from "date-fns";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -12,26 +12,42 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
   const [hoveredDay, setHoveredDay] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
+  // -------------------------------
+  // 1. Generate days (GitHub-style)
+  // -------------------------------
+  const startDate = startOfWeek(subDays(new Date(), 364), {
+    weekStartsOn: 0, // Sunday
+  });
+  const endDate = new Date();
+
   const days = eachDayOfInterval({
-    start: subDays(new Date(), 364),
-    end: new Date(),
+    start: startDate,
+    end: endDate,
   });
 
-  // Group days by weeks
-  const weeks: Date[][] = [];
-  let currentWeek: Date[] = [];
-  
-  days.forEach((day, index) => {
-    if (index % 7 === 0 && currentWeek.length > 0) {
-      weeks.push([...currentWeek]);
+  // -------------------------------
+  // 2. Group days into calendar weeks
+  // -------------------------------
+  const weeks: (Date | null)[][] = [];
+  let currentWeek: (Date | null)[] = [];
+
+  days.forEach((day) => {
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
       currentWeek = [];
     }
     currentWeek.push(day);
   });
-  if (currentWeek.length > 0) {
-    weeks.push(currentWeek);
-  }
 
+  // Pad last week
+  while (currentWeek.length < 7) {
+    currentWeek.push(null);
+  }
+  weeks.push(currentWeek);
+
+  // -------------------------------
+  // 3. Color intensity logic
+  // -------------------------------
   const maxCount = Math.max(...Object.values(data), 1);
 
   function getIntensity(count: number): string {
@@ -43,6 +59,9 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
     return "bg-green-500";
   }
 
+  // -------------------------------
+  // 4. Render
+  // -------------------------------
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -50,8 +69,12 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
       transition={{ duration: 0.5 }}
       className="w-full"
     >
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold text-gray-100">Contribution Heatmap (Last Year)</h3>
+        <h3 className="text-xl font-bold text-gray-100">
+          Contribution Heatmap (Last Year)
+        </h3>
+
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <span>Less</span>
           <div className="flex gap-1">
@@ -65,11 +88,16 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
         </div>
       </div>
 
+      {/* Heatmap */}
       <div className="overflow-x-auto">
-        <div className="flex gap-1 p-4 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+        <div className="flex gap-1 p-4 bg-gray-900 rounded-xl border border-gray-700 w-max">
           {weeks.map((week, weekIndex) => (
             <div key={weekIndex} className="flex flex-col gap-1">
-              {week.map((day) => {
+              {week.map((day, dayIndex) => {
+                if (!day) {
+                  return <div key={dayIndex} className="w-3 h-3" />;
+                }
+
                 const key = format(day, "yyyy-MM-dd");
                 const count = data[key] || 0;
                 const isHovered = hoveredDay === key;
@@ -80,17 +108,24 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
                     key={key}
                     onMouseEnter={() => setHoveredDay(key)}
                     onMouseLeave={() => setHoveredDay(null)}
-                    onClick={() => setSelectedDay(selectedDay === key ? null : key)}
+                    onClick={() =>
+                      setSelectedDay(selectedDay === key ? null : key)
+                    }
                     whileHover={{ scale: 1.3, zIndex: 10 }}
                     whileTap={{ scale: 1.1 }}
                     className={`w-3 h-3 rounded cursor-pointer transition-all ${
                       getIntensity(count)
                     } ${
                       isHovered || isSelected
-                        ? "ring-2 ring-blue-500 ring-offset-2"
+                        ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900"
                         : ""
                     }`}
-                    title={`${format(day, "MMM dd, yyyy")}: ${count} contribution${count !== 1 ? "s" : ""}`}
+                    title={`${format(
+                      day,
+                      "MMM dd, yyyy"
+                    )}: ${count} contribution${
+                      count !== 1 ? "s" : ""
+                    }`}
                   />
                 );
               })}
@@ -99,6 +134,7 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
         </div>
       </div>
 
+      {/* Selected day info */}
       {selectedDay && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -109,7 +145,8 @@ export default function EnhancedHeatmap({ data }: EnhancedHeatmapProps) {
             {format(new Date(selectedDay), "EEEE, MMMM dd, yyyy")}
           </p>
           <p className="text-sm text-blue-300">
-            {data[selectedDay] || 0} contribution{data[selectedDay] !== 1 ? "s" : ""}
+            {data[selectedDay] || 0} contribution
+            {(data[selectedDay] || 0) !== 1 ? "s" : ""}
           </p>
         </motion.div>
       )}
