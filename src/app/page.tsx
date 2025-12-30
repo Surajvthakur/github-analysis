@@ -36,32 +36,6 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full "
-        >
-          {[
-            { icon: "📊", title: "Interactive Charts", desc: "Bar, line, pie, radar, and more" },
-            { icon: "🔥", title: "Heatmaps", desc: "Visualize contribution activity" },
-            { icon: "🌐", title: "Network Views", desc: "Explore repository relationships" },
-          ].map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-              whileHover={{ y: -5, scale: 1.05 }}
-              className="p-6 rounded-xl bg-transparent  border border-gray-700 shadow-lg text-center"
-            >
-              <div className="text-4xl mb-3">{feature.icon}</div>
-              <h3 className="font-bold text-lg mb-2 text-gray-100">{feature.title}</h3>
-              <p className="text-sm text-gray-400">{feature.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-
         {/* Quick Links */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
