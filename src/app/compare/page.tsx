@@ -38,7 +38,7 @@ export default async function ComparePage({
 
   return (
     <div className="space-y-8">
-      <h1 className="text-4xl font-bold mb-10 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <h1 className="text-4xl font-bold mb-10 text-center">
         GitHub Profile Comparison
       </h1>
 
