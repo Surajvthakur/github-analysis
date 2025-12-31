@@ -2,6 +2,9 @@ import TrendingList from "@/app/components/global/TrendingList";
 import LanguageOverview from "@/app/components/global/LanguageOverview";
 import InsightCards from "@/app/components/global/InsightCards";
 
+// Force dynamic rendering to avoid build-time fetch issues with environment variables
+export const dynamic = "force-dynamic";
+
 async function getGlobalData() {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/global?type=dashboard`,
