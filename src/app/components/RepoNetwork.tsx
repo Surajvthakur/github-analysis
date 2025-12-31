@@ -115,7 +115,7 @@ export default function RepoNetwork({ repos }: RepoNetworkProps) {
         </div>
       </div>
 
-      <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-4 overflow-hidden border border-gray-700">
+      <div className="relative">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto"
