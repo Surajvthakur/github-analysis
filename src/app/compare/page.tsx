@@ -48,7 +48,7 @@ export default async function ComparePage({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <LiquidGlassCard className="p-6" draggable={false}>
+        <LiquidGlassCard className="p-6" draggable={true}>
           <ComparisonChart
             user1={user1}
             user2={user2}
@@ -57,7 +57,7 @@ export default async function ComparePage({
             label="Total Stars"
           />
         </LiquidGlassCard>
-        <LiquidGlassCard className="p-6" draggable={false}>
+        <LiquidGlassCard className="p-6" draggable={true}>
           <ComparisonChart
             user1={user1}
             user2={user2}
