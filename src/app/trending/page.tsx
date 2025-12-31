@@ -1,5 +1,6 @@
 import TrendingTable from "@/app/components/global/TrendingTable";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
+export const dynamic = "force-dynamic";
 
 async function getTrending() {
   const res = await fetch(
