@@ -8,6 +8,8 @@ import CompareUsers from "@/app/components/CompareUsers";
 import RadarStats from "@/app/components/compare/RadarStats";
 import CompareHeatmaps from "@/app/components/compare/CompareHeatmaps";
 
+export const dynamic = "force-dynamic";
+
 export default async function ComparePage({
   searchParams,
 }: {

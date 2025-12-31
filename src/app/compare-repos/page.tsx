@@ -2,11 +2,22 @@ import RepoCompareCard from "@/app/components/global/RepoCompareCard";
 import RepoCompareStats from "@/app/components/global/RepoCompareStats";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 import CompareRepos from "@/app/components/CompareRepos";
+import { headers } from "next/headers";
+
+export const dynamic = "force-dynamic";
+
+async function getServerUrl(): Promise<string> {
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol = headersList.get("x-forwarded-proto") || "https";
+    return `${protocol}://${host}`;
+}
 
 async function getRepo(name: string) {
+    const baseUrl = await getServerUrl();
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/global?type=repo&name=${name}`,
-        { next: { revalidate: 60 * 60 } }
+        `${baseUrl}/api/global?type=repo&name=${name}`,
+        { cache: "no-store" }
     );
 
     if (!res.ok) {

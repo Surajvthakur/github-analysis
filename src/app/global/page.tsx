@@ -1,14 +1,23 @@
 import TrendingList from "@/app/components/global/TrendingList";
 import LanguageOverview from "@/app/components/global/LanguageOverview";
 import InsightCards from "@/app/components/global/InsightCards";
+import { headers } from "next/headers";
 
 // Force dynamic rendering to avoid build-time fetch issues with environment variables
 export const dynamic = "force-dynamic";
 
+async function getServerUrl(): Promise<string> {
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol = headersList.get("x-forwarded-proto") || "https";
+    return `${protocol}://${host}`;
+}
+
 async function getGlobalData() {
+    const baseUrl = await getServerUrl();
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/global?type=dashboard`,
-        { next: { revalidate: 60 * 60 * 6 } }
+        `${baseUrl}/api/global?type=dashboard`,
+        { cache: "no-store" }
     );
 
     if (!res.ok) {
