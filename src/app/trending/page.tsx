@@ -1,4 +1,5 @@
 import TrendingTable from "@/app/components/global/TrendingTable";
+import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 async function getTrending() {
   const res = await fetch(
@@ -30,7 +31,10 @@ export default async function TrendingPage() {
       </header>
 
       {/* Table */}
+      <LiquidGlassCard>
+
       <TrendingTable repos={data.repos} />
+      </LiquidGlassCard>
     </section>
   );
 }
