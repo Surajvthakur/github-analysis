@@ -37,14 +37,14 @@ export default async function CompareLanguageStats({
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <LiquidGlassCard className="p-6 w-[500px]" draggable={false}>
+        <LiquidGlassCard className="p-6 " draggable={true}>
           <h3 className="text-lg font-semibold mb-4 text-center text-gray-100">
             {user1}
           </h3>
           <LanguageChart data={data1} />
         </LiquidGlassCard>
 
-        <LiquidGlassCard className="p-6 w-[500px]" draggable={false}>
+        <LiquidGlassCard className="p-6 " draggable={true}>
           <h3 className="text-lg font-semibold mb-4 text-center text-gray-100">
             {user2}
           </h3>
