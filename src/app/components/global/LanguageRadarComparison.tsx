@@ -114,11 +114,12 @@ export default function LanguageRadarComparison({ languages }: LanguageRadarComp
             className="border-gray-700"
         >
             {/* Language selector */}
-            <div className="mb-6">
-                <p className="text-sm text-gray-400 mb-3">
+            <div className="my-2">
+                <br />
+                <p className="text-sm text-gray-400 my-6 text-center font-bold">
                     Select up to 5 languages to compare (currently {selectedLanguages.length}/5):
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 justify-center">
                     {topLanguages.map((lang, idx) => {
                         const isSelected = selectedLanguages.includes(lang.displayName);
                         return (
@@ -127,7 +128,7 @@ export default function LanguageRadarComparison({ languages }: LanguageRadarComp
                                 onClick={() => toggleLanguage(lang.displayName)}
                                 disabled={!isSelected && selectedLanguages.length >= 5}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${isSelected
-                                    ? "bg-gradient-to-r text-white shadow-lg"
+                                    ? "bg-linear-to-r text-white shadow-lg"
                                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                                 style={
@@ -186,24 +187,24 @@ export default function LanguageRadarComparison({ languages }: LanguageRadarComp
             )}
 
             {/* Metrics explanation */}
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 max-w-lg mx-2.5">
                     <h4 className="text-sm font-semibold text-blue-400 mb-1">Repository Count</h4>
                     <p className="text-xs text-gray-400">Number of top repositories using this language</p>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 max-w-lg mx-2.5">
                     <h4 className="text-sm font-semibold text-purple-400 mb-1">Total Stars</h4>
                     <p className="text-xs text-gray-400">Combined stars from all repositories</p>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 max-w-lg mx-2.5">
                     <h4 className="text-sm font-semibold text-pink-400 mb-1">Popularity</h4>
                     <p className="text-xs text-gray-400">Overall popularity score</p>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 max-w-lg mx-2.5">
                     <h4 className="text-sm font-semibold text-orange-400 mb-1">Avg Stars/Repo</h4>
                     <p className="text-xs text-gray-400">Average stars per repository</p>
                 </div>
-                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
+                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 max-w-lg mx-2.5">
                     <h4 className="text-sm font-semibold text-green-400 mb-1">Ranking Index</h4>
                     <p className="text-xs text-gray-400">Overall ranking position</p>
                 </div>
