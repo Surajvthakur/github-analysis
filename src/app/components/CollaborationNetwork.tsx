@@ -153,7 +153,7 @@ export default function CollaborationNetwork({
       </p>
       <div
         ref={networkRef}
-        className="w-full h-[600px] rounded-lg bg-gray-900 border border-gray-700"
+        className="w-full h-[600px] rounded-lg bg-transparent"
       />
       <div className="mt-4 text-xs text-gray-500">
         {contributors.length} contributors • Drag nodes to explore

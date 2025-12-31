@@ -25,7 +25,7 @@ export default async function GlobalDashboardPage() {
                 <h1 className="text-4xl font-bold mb-4">
                     Global GitHub Analytics
                 </h1>
-                <p className="text-gray-600 max-w-2xl mx-auto">
+                <p className="max-w-2xl mx-auto">
                     Explore trends, popular repositories, and language
                     insights across the GitHub ecosystem.
                 </p>
