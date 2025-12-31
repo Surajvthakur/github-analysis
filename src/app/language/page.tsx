@@ -5,11 +5,22 @@ import LanguageTreemap from "@/app/components/global/LanguageTreemap";
 import LanguageTrendChart from "@/app/components/global/LanguageTrendChart";
 import LanguageRadarComparison from "@/app/components/global/LanguageRadarComparison";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
+import { headers } from "next/headers";
+
+export const dynamic = "force-dynamic";
+
+async function getServerUrl(): Promise<string> {
+    const headersList = await headers();
+    const host = headersList.get("host");
+    const protocol = headersList.get("x-forwarded-proto") || "https";
+    return `${protocol}://${host}`;
+}
 
 async function getLanguages() {
+    const baseUrl = await getServerUrl();
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/global?type=languages`,
-        { cache: 'no-store' } // Force fresh data
+        `${baseUrl}/api/global?type=languages`,
+        { cache: 'no-store' }
     );
 
     if (!res.ok) {
@@ -128,7 +139,7 @@ export default async function LanguagesPage() {
                     <LanguageRadarComparison languages={data.languages} />
                     <br />
                 </LiquidGlassCard>
-    
+
             </section>
 
             {/* Rankings */}

@@ -1,11 +1,21 @@
 import TrendingTable from "@/app/components/global/TrendingTable";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
+import { headers } from "next/headers";
+
 export const dynamic = "force-dynamic";
 
+async function getServerUrl(): Promise<string> {
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") || "https";
+  return `${protocol}://${host}`;
+}
+
 async function getTrending() {
+  const baseUrl = await getServerUrl();
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/global?type=trending`,
-    { next: { revalidate: 60 * 60 * 6 } }
+    `${baseUrl}/api/global?type=trending`,
+    { cache: "no-store" }
   );
 
   if (!res.ok) {
@@ -34,7 +44,7 @@ export default async function TrendingPage() {
       {/* Table */}
       <LiquidGlassCard>
 
-      <TrendingTable repos={data.repos} />
+        <TrendingTable repos={data.repos} />
       </LiquidGlassCard>
     </section>
   );
