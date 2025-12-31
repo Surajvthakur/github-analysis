@@ -37,25 +37,25 @@ export default async function LanguagesPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
+                <div className="bg-linear-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
                     <div className="text-3xl font-bold text-blue-400">
                         {data.languages.length}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">Total Languages</div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6">
+                <div className="bg-linear-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6">
                     <div className="text-3xl font-bold text-purple-400">
                         {data.languages.reduce((sum: number, lang: any) => sum + lang.repoCount, 0).toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">Total Repositories</div>
                 </div>
-                <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6">
+                <div className="bg-linear-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6">
                     <div className="text-3xl font-bold text-green-400">
                         {data.languages.reduce((sum: number, lang: any) => sum + (lang.totalStars || 0), 0).toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">Total Stars</div>
                 </div>
-                <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-xl p-6">
+                <div className="bg-linear-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-xl p-6">
                     <div className="text-3xl font-bold text-orange-400">
                         {data.languages[0]?.language || 'N/A'}
                     </div>
@@ -86,7 +86,9 @@ export default async function LanguagesPage() {
                 <p className="text-gray-400 text-sm mb-4">
                     Visual representation of codebase composition by language
                 </p>
-                <LanguageTreemap languages={data.languages} />
+                <LiquidGlassCard>
+                    <LanguageTreemap languages={data.languages} />
+                </LiquidGlassCard>
             </section>
 
             {/* Overview Chart */}
@@ -109,6 +111,7 @@ export default async function LanguagesPage() {
                 </p>
                 <LiquidGlassCard>
                     <LanguageTrendChart languages={data.languages} />
+                    <br />
                 </LiquidGlassCard>
             </section>
 
@@ -123,7 +126,9 @@ export default async function LanguagesPage() {
                 </p>
                 <LiquidGlassCard>
                     <LanguageRadarComparison languages={data.languages} />
+                    <br />
                 </LiquidGlassCard>
+    
             </section>
 
             {/* Rankings */}
@@ -132,7 +137,10 @@ export default async function LanguagesPage() {
                     <span className="text-3xl">🏆</span>
                     Language Rankings
                 </h2>
-                <LanguageTable languages={data.languages} />
+                <LiquidGlassCard>
+                    <LanguageTable languages={data.languages} />
+                    <br />
+                </LiquidGlassCard>
             </section>
         </section>
     );
