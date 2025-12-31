@@ -5,6 +5,8 @@ import CompareLanguageStats from "@/app/components/CompareLanguageStats";
 import ComparisonChart from "@/app/components/ComparisonChart";
 import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 import CompareUsers from "@/app/components/CompareUsers";
+import RadarStats from "@/app/components/compare/RadarStats";
+import CompareHeatmaps from "@/app/components/compare/CompareHeatmaps";
 
 export default async function ComparePage({
   searchParams,
@@ -73,6 +75,11 @@ export default async function ComparePage({
       </LiquidGlassCard>
 
       <CompareLanguageStats user1={user1} user2={user2} />
+      <LiquidGlassCard className="p-6" draggable={true}>
+        <RadarStats user1={user1} user2={user2} u1={u1} u2={u2} />
+      </LiquidGlassCard>
+
+      <CompareHeatmaps user1={user1} user2={user2} />
     </div>
   );
 }
