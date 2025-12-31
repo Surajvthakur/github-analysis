@@ -6,7 +6,7 @@ import { LiquidGlassCard } from "@/components/liquid-weather-glass";
 
 export default function CompareCard({ user }: { user: any }) {
   return (
-    <LiquidGlassCard className="p-6 text-center" draggable={false}>
+    <LiquidGlassCard className="p-6 text-center" draggable={true}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

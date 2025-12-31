@@ -68,7 +68,7 @@ export default async function ComparePage({
         </LiquidGlassCard>
       </div>
 
-      <LiquidGlassCard className="p-6" draggable={false}>
+      <LiquidGlassCard className="p-6" draggable={true}>
         <CompareStats user1={u1} user2={u2} />
       </LiquidGlassCard>
 
