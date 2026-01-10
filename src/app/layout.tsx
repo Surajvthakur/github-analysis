@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import EtherealBackground from "./components/EtherealBackground";
+import LenisProvider from "../components/LenisProvider";
 
 export const metadata: Metadata = {
   title: "GitHub Analytics",
@@ -19,6 +20,9 @@ export default function RootLayout({
         className="min-h-screen flex flex-col bg-black text-gray-100 relative"
         suppressHydrationWarning={true}
       >
+        {/* Lenis Smooth Scroll Provider */}
+        <LenisProvider />
+
         {/* Ethereal Shadow Background - Applies to all pages */}
         <EtherealBackground />
 

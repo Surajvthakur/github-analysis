@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Features
+
+- **Smooth Scrolling**: Implemented with [Lenis](https://lenis.studiofreight.com/) for buttery smooth scroll experiences
+- GitHub Analytics Dashboard with interactive visualizations
+- Repository and user comparison tools
+- Language usage statistics and trends
+
 ## Getting Started
 
 First, run the development server:
